@@ -1,18 +1,19 @@
 import React, { useContext, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
-import { FaArrowLeftLong } from "react-icons/fa6";
 import { AuthContext } from "../../components/AuthProvider/AuthProvider";
+import toast from "react-hot-toast";
+import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
-import axios from "axios";
 import CustomCursor from "../../components/CustomCursor/CustomCursor";
 
 const Login = () => {
   const { createSignInUser, signInWithGoogle } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const from = location.state?.from?.pathname || "/dashboard";
+
   const {
     register,
     handleSubmit,
@@ -24,122 +25,115 @@ const Login = () => {
 
     try {
       await createSignInUser(email, password);
-      toast.success("Successfully Logged in");
-      navigate(location?.state || "/dashboard");
+      toast.success("Login Successful! Welcome to SINEX.");
+      navigate(from, { replace: true });
     } catch (error) {
-      console.error("Login Error: ", error);
-      toast.error("Login failed");
+      console.error("Firebase Login Error:", error);
+      if (error.code === "auth/invalid-credential" || error.code === "auth/user-not-found" || error.code === "auth/wrong-password") {
+        toast.error("Invalid email or password. Please verify your credentials.");
+      } else {
+        toast.error(`Login failed: ${error.message}`);
+      }
     }
   };
 
   const handleGoogleLogin = async () => {
     try {
-      const data = await signInWithGoogle();
-      console.log(data);
-      navigate(location?.state || "/dashboard");
-      const googleUserData = {
-        name: data?.user?.displayName,
-        email: data?.user?.email,
-        photo: data?.user?.photoURL,
-        role: "Worker",
-      };
-      await axios.post(
-        "https://earn-money-server-5.onrender.com/users",
-        googleUserData
-      );
+      await signInWithGoogle();
+      toast.success("Google Login Successful!");
+      navigate(from, { replace: true });
     } catch (error) {
-      console.error("Login Error: ", error);
-      toast.error("Login failed");
+      console.error("Google Login Error:", error);
+      toast.error("Google sign-in failed.");
     }
   };
 
   return (
-    <div className="bg-gradient-to-r from-[#020710] to-[#1b2028] min-h-screen relative">
-      <CustomCursor></CustomCursor>
-      <div className="absolute" >
-        <NavLink to="/" className="flex p-5">
-          <button className="text-white py-3 text-center font-bold flex items-center gap-2 hover:-translate-x-2 duration-500">
-            <FaArrowLeftLong />
-            Go Back Home
-          </button>
-        </NavLink>
-      </div>
-      <div className="hero bg-gradient-to-t from-[#27292f] to-[#10121d] rounded-tr-full rounded-bl-full min-h-screen">
-        <div className="w-11/12 mx-auto lg:flex lg:flex-row-reverse">
-          <div className="card lg:w-[50%] mx-auto bg-base-100 max-w-lg lg:max-w-md shrink-0 shadow-2xl">
-            <form onSubmit={handleSubmit(onSubmit)} className="card-body">
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Email</span>
-                </label>
-                <input
-                  type="email"
-                  {...register("email", { required: "Email is required" })}
-                  placeholder="Email"
-                  className="input input-bordered"
-                />
-                {errors.email && (
-                  <p className="text-red-500">{errors.email.message}</p>
-                )}
-              </div>
-              <div className="form-control relative">
-                <label className="label">
-                  <span className="label-text">Password</span>
-                </label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                  placeholder="Password"
-                  className="input input-bordered"
-                />
-                {errors.password && (
-                  <p className="text-red-500">{errors.password.message}</p>
-                )}
+    <div className="bg-slate-950 min-h-screen py-12 px-4 flex items-center justify-center">
+      <CustomCursor />
+      <div className="w-full max-w-md mx-auto bg-slate-900 rounded-2xl shadow-2xl p-6 lg:p-8 border border-slate-800 text-slate-100">
+        
+        <h2 className="font-extrabold text-3xl text-center mb-2">
+          Login to SINEX
+        </h2>
+        <p className="text-slate-400 text-center text-sm mb-6">
+          Welcome back! Access your dashboard and earnings.
+        </p>
 
-                <div
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-[52px] cursor-pointer"
-                >
-                  {showPassword ? (
-                    <FaEyeSlash className="text-xl" />
-                  ) : (
-                    <FaEye className="text-xl" />
-                  )}
-                </div>
-
-                <div className="label">
-                  <h2 className="label-text-alt link link-hover block">
-                    Forgot password?
-                  </h2>
-                 
-                </div>
-              </div>
-              <h2 className="text-sm block">Don't have an account? please <Link to="/register" className="text-accent">Register</Link> </h2>
-              <div className="form-control mt-6">
-                <button
-                  type="submit"
-                  className="btn bg-[#00d7c0] hover:bg-[#00d7c0] font-bold text-white"
-                >
-                  Login
-                </button>
-                <button
-                  onClick={handleGoogleLogin}
-                  type="button"
-                  className="btn mt-3 bg-[#00d7c0] hover:bg-[#00d7c0] font-bold text-white"
-                >
-                  <img
-                    src="https://i.ibb.co/TvvzXfq/google.png"
-                    className="w-8"
-                    alt="Google"
-                  />
-                  Continue With Google
-                </button>
-              </div>
-            </form>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <div className="form-control">
+            <label className="label">
+              <span className="label-text text-slate-200 font-semibold">Email Address</span>
+            </label>
+            <input
+              type="email"
+              {...register("email", { required: "Email is required" })}
+              placeholder="Enter email"
+              className="input input-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none"
+            />
+            {errors.email && (
+              <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
+            )}
           </div>
-        </div>
+
+          <div className="form-control relative">
+            <label className="label">
+              <span className="label-text text-slate-200 font-semibold">Password</span>
+            </label>
+            <div className="relative w-full">
+              <input
+                type={showPassword ? "text" : "password"}
+                {...register("password", { required: "Password is required" })}
+                placeholder="Enter password"
+                className="input input-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none pr-10"
+              />
+              <div
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-white z-10"
+              >
+                {showPassword ? <FaEyeSlash className="text-lg" /> : <FaEye className="text-lg" />}
+              </div>
+            </div>
+            {errors.password && (
+              <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
+            )}
+          </div>
+
+          <div className="text-right text-xs">
+            <span className="text-slate-400 hover:text-[#00d7c0] cursor-pointer">
+              Forgot password?
+            </span>
+          </div>
+
+          <div className="pt-2 space-y-3">
+            <button
+              type="submit"
+              className="btn w-full bg-[#00d7c0] text-slate-950 hover:bg-[#00bfa8] border-none font-bold"
+            >
+              Login to SINEX
+            </button>
+            <button
+              onClick={handleGoogleLogin}
+              type="button"
+              className="btn w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white flex items-center justify-center gap-2"
+            >
+              <img
+                src="https://i.ibb.co/TvvzXfq/google.png"
+                className="w-5 h-5 object-contain"
+                alt="Google"
+              />
+              Continue With Google
+            </button>
+          </div>
+
+          <p className="text-center text-xs text-slate-400 mt-4">
+            Don't have a SINEX account?{" "}
+            <NavLink to="/register" className="text-[#00d7c0] hover:underline font-semibold">
+              Register here
+            </NavLink>
+          </p>
+
+        </form>
       </div>
     </div>
   );

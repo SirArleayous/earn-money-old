@@ -15,7 +15,7 @@ const TaskLists = () => {
     isLoading,
     refetch,
   } = useQuery({
-    queryKey: ["postedTasks",sortOrder],
+    queryKey: ["postedTasks", sortOrder],
     queryFn: async () => {
       const { data } = await axiosSecure.get(`api/worker/tasks?sort=${sortOrder}`);
       console.log(data);
@@ -38,26 +38,23 @@ const TaskLists = () => {
         <div className="pb-10">
           <div className="">
             <h2 className="font-bold text-center text-4xl">
-              Task Lists Optimization
+              Available Task Directory
             </h2>
             <p className="text-center w-[60%] mx-auto py-3">
-              Conduct a comprehensive review of task lists to enhance their
-              structure, usability, and visual design. The goal is to create an
-              intuitive, organized, and efficient task management system that
-              improves user experience.
+              Explore verified digital tasks across regional campaigns. Select tasks that align with your skills, execute requirements accurately, and build your SINEX wallet reward balance.
             </p>
           </div>
           <div className="">
             <select onChange={(e) => setSortOrder(e.target.value)} className="select select-bordered text-black">
               <option disabled selected>
-                Sort By Price
+                Sort By Reward
               </option>
-              <option>Low to heigh</option>
-              <option>Heigh to low</option>
+              <option value="Low to heigh">Low to High</option>
+              <option value="Heigh to low">High to Low</option>
             </select>
           </div>
         </div>
-        <div className="grid lg:grid-cols-3 md:grid-cols-2  gap-4">
+        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
           {postedTasks.map((postedTask, index) => (
             <TaskList key={index} postedTask={postedTask}></TaskList>
           ))}

@@ -1,127 +1,128 @@
 import React, { useContext } from "react";
 import { ThemeContext } from "../../context/ThemeContext";
+
 const DiamondFacility = () => {
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
   return (
     <div
-    className="bg-no-repeat bg-center "
-    style={{
-      backgroundImage: `url(https://ninetheme.com/themes/cryptoland/wp-content/uploads/2018/10/data-bg.png)`,
-    }}
-
-  >
+      className="bg-no-repeat bg-center"
+      style={{
+        backgroundImage: `url(https://ninetheme.com/themes/cryptoland/wp-content/uploads/2018/10/data-bg.png)`,
+      }}
+    >
       <div className="w-11/12 mx-auto">
         <div className="pb-14 pt-20">
-          <h2 className="md:text-4xl text-3xl  font-bold text-center">
-            Diamond Facilities for Your Earning Journey
+          <h2 className="md:text-4xl text-3xl font-bold text-center">
+            Diamond Features for Your SINEX Journey
           </h2>
-          <p className="text-center  md:w-[50%] mx-auto py-3">
-            Unlock premium features designed to enhance your earning experience,
-            including instant payouts, diverse income opportunities, and 24/7
-            support, all within a secure and user-friendly platform.
+          <p className="text-center md:w-[50%] mx-auto py-3">
+            Unlock premium features built to enhance your experience, including rapid withdrawals, diverse campaign options, and round-the-clock support.
           </p>
         </div>
         <div className="lg:flex gap-8 py-10">
           <div className="lg:w-[25%] space-y-4">
-            {/* Card 1 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                Instant Payouts
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                Fast Payouts
               </h2>
               <p className="text-center py-3">
-                Receive your earnings quickly with our fast and reliable payout
-                system.
+                Receive your converted earnings reliably through our structured payout gateway.
               </p>
             </div>
-            {/* Card 2 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                Secure Transactions
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                Secure Escrow
               </h2>
               <p className="text-center py-3">
-                Enjoy peace of mind with our robust security measures for all
-                financial activities.
+                Enjoy peace of mind with escrow-backed campaign funds ensuring verified tasks are paid out.
               </p>
             </div>
-            {/* Card 3 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                24/7 Support
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                24/7 Assistance
               </h2>
               <p className="text-center py-3">
-                Get assistance anytime with our dedicated customer support team.
+                Get help anytime with our dedicated operational support team.
               </p>
             </div>
           </div>
-          {
-            theme === "light" ? 
+          {theme === "light" ? (
             <div className="lg:w-[40%] lg:py-0 py-10 flex justify-center items-center mx-auto">
               <img
                 className="w-full"
                 src="https://toka.peerduck.com/wp-content/uploads/2022/03/worldwide.png"
-                alt=""
-              />  </div> : <div className="lg:w-[30%] lg:py-0 py-10 flex justify-center items-center mx-auto">
+                alt="Worldwide"
+              />
+            </div>
+          ) : (
+            <div className="lg:w-[30%] lg:py-0 py-10 flex justify-center items-center mx-auto">
               <img
                 className="w-full"
                 src="https://iko-nuxt.netlify.app/assets/img/update/normal/intro_1-1.png"
-                alt=""
-              />  </div>
-          }
-         
+                alt="Network"
+              />
+            </div>
+          )}
 
           <div className="lg:w-[25%] space-y-4">
-            {/* Card 1 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                Diverse Earnings
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                Diverse Opportunities
               </h2>
               <p className="text-center py-3">
-                Explore various earning options to suit your skills and
-                preferences
+                Explore varied task categories matching your technical skills and preferences.
               </p>
             </div>
-            {/* Card 2 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                Flexible Opportunities
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                Flexible Schedules
               </h2>
               <p className="text-center py-3">
-                Choose from a range of tasks and projects that fit your schedule
-                and lifestyle.
+                Select tasks and campaigns that seamlessly fit your lifestyle.
               </p>
             </div>
-            {/* Card 3 */}
-            <div className={`rounded-xl p-10 ${
-        theme === "light"
-          ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
-          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
-      }`}>
-              <h2 className="font-bold  text-2xl text-center">
-                Learning Resources
+            <div
+              className={`rounded-xl p-10 ${
+                theme === "light"
+                  ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
+                  : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+              }`}
+            >
+              <h2 className="font-bold text-2xl text-center">
+                Knowledge Resources
               </h2>
               <p className="text-center py-3">
-                Connect with like-minded individuals to share tips, advice, and
-                opportunities.
+                Access community insights and guides to maximize your task earnings.
               </p>
             </div>
           </div>

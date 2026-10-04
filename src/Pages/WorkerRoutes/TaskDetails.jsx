@@ -8,7 +8,7 @@ import { ThemeContext } from "../../context/ThemeContext";
 
 const TaskDetails = () => {
   const { user } = useAuth();
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
   const axiosSecure = useAxiosSecure();
   const { id } = useParams();
   const {
@@ -40,7 +40,6 @@ const TaskDetails = () => {
     worker,
     totalPayment,
     PaymentCoin,
-
     completionDate,
     submissionImage,
     taskImage,
@@ -75,7 +74,6 @@ const TaskDetails = () => {
     console.log(taskSubmitInfo);
 
     if (worker > 0) {
-      // write something
       try {
         const { data } = await axiosSecure.post(
           `api/worker/submit/${user?.email}`,
@@ -86,8 +84,7 @@ const TaskDetails = () => {
         console.log(data);
         toast.success("Submission is Successful!!!");
 
-        // Post Message For Buyer To submission Alert
-        let message = `${user?.displayName} has submitted the work for ${title}`;
+        let message = `${user?.displayName} has submitted work for ${title}`;
         const route = "/dashboard";
         const notificationObj = {
           message,
@@ -102,7 +99,7 @@ const TaskDetails = () => {
             notificationObj
           );
           console.log(data);
-          toast.success("Successfully added notification");
+          toast.success("Successfully sent notification to campaign client");
         } catch (err) {
           console.log(err);
         }
@@ -115,7 +112,6 @@ const TaskDetails = () => {
 
   let date = new Date(completionDate);
 
-  // Array of month names
   let monthNames = [
     "January",
     "February",
@@ -131,12 +127,11 @@ const TaskDetails = () => {
     "December",
   ];
 
-  // Format the date
   let dateFormatted = `${
     monthNames[date.getMonth()]
   } ${date.getDate()}, ${date.getFullYear()}`;
 
-  console.log(dateFormatted); // Output: January 28, 2025
+  console.log(dateFormatted);
 
   return (
     <div
@@ -149,12 +144,10 @@ const TaskDetails = () => {
       <div className="w-[90%] mx-auto">
         <div className="py-8">
           <h2 className="font-bold text-center text-3xl">
-            Maximize Your Earnings: A Comprehensive Guide
+            SINEX Task Details & Submission Guide
           </h2>
           <p className="py-3 text-center md:w-[60%] mx-auto">
-            Discover effective strategies and practical tips to boost your
-            income through various methods, including online opportunities,
-            investment strategies, and side hustles.
+            Review the campaign instructions carefully before executing your task. Submit required proof details to receive your verified reward balance.
           </p>
         </div>
         <div className="lg:flex gap-4">
@@ -163,7 +156,7 @@ const TaskDetails = () => {
               <img
                 className="w-full h-[350px] object-cover"
                 src={taskImage}
-                alt="Shoes"
+                alt="Task"
               />
             </figure>
             <div className="card-body">
@@ -171,23 +164,20 @@ const TaskDetails = () => {
                 <h2 className="font-bold text-xl">{title}</h2>
                 <p className="py-2">{detail}</p>
                 <p className="py-2">
-                  {" "}
                   <span className="font-bold text-xl mr-2">
                     Completion-Date:
-                  </span>{" "}
+                  </span>
                   {dateFormatted}
                 </p>
                 <p className="py-2">
-                  {" "}
                   <span className="font-bold text-xl">
                     Required-Workers:
-                  </span>{" "}
-                  <span className="btn ml-2">{worker}</span>{" "}
+                  </span>
+                  <span className="btn ml-2">{worker}</span>
                 </p>
                 <p className="py-2 border-b pb-6">
-                  {" "}
-                  <span className="font-bold text-xl">Payment:</span>{" "}
-                  <span className="btn ml-2">{payment}.00$</span>{" "}
+                  <span className="font-bold text-xl">Payment:</span>
+                  <span className="btn ml-2">{payment}.00$</span>
                 </p>
               </div>
 
@@ -198,7 +188,7 @@ const TaskDetails = () => {
                     <img
                       className="w-14 h-14 rounded-full"
                       src={buyerInfo?.photo}
-                      alt=""
+                      alt="Client"
                     />
                   </div>
                 </div>
@@ -206,7 +196,7 @@ const TaskDetails = () => {
                   <h2 className="font-bold my-2">Total-Payment</h2>
                   <div className="">
                     <p className="py-2">
-                      <span className="btn">{totalPayment}.00$</span>{" "}
+                      <span className="btn">{totalPayment}.00$</span>
                     </p>
                   </div>
                 </div>
@@ -215,43 +205,32 @@ const TaskDetails = () => {
           </div>
           <div className="lg:w-[40%] mb-10 shadow-xl">
             <div className="">
-              <img className="" src={submissionImage} alt="" />
+              <img className="" src={submissionImage} alt="Sample" />
             </div>
 
             <div className="p-5">
               <div className="">
-                <h2 className="font-bold text-xl ">
-                  Tailored Professional Services
+                <h2 className="font-bold text-xl">
+                  Tailored Professional Execution
                 </h2>
                 <p className="py-2">
-                  Tasks are categorized by purpose to streamline workflows:
-                  development focuses on coding, design on visuals like UI and
-                  branding, education on skill-building, content on writing and
-                  organization, and submission on reviewing and sharing
-                  completed work.
+                  Tasks are structured to maintain quality and operational efficiency across the SINEX platform ecosystem.
                 </p>
                 <p className="py-2">
-                  Each task has clear objectives, guiding its completion.
-                  Development tasks address features or bugs, design tasks
-                  enhance user interfaces, educational tasks improve skills, and
-                  content tasks deliver quality materials.
-                </p>
-                <p className="py-2">
-                  Let’s collaborate to bring your vision to life and deliver
-                  outstanding results.
+                  Ensure all requested evidence, URLs, or notes are submitted accurately below for fast client verification.
                 </p>
               </div>
               <div className="py-5">
                 <form onSubmit={handleTaskSubmit}>
                   <textarea
-                    placeholder="Submission_Details"
+                    placeholder="Enter submission proof details..."
                     name="submission_detail"
                     className="textarea textarea-bordered textarea-lg w-full max-w-lg"
                     required
                   ></textarea>
                   <div className="mt-2">
-                    <button className="btn bg-accent text-white task">
-                      Submit
+                    <button className="btn bg-[#00d7c0] hover:bg-[#00bfa8] border-none text-white font-bold">
+                      Submit Task Evidence
                     </button>
                   </div>
                 </form>

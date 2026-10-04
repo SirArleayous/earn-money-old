@@ -6,7 +6,7 @@ import CustomCursor from "../components/CustomCursor/CustomCursor";
 import { ThemeContext } from "../context/ThemeContext";
 
 const HomePageLayout = () => {
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
   return (
     <div className={` ${
       theme === "light"

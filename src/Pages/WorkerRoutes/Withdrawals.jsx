@@ -12,7 +12,8 @@ const Withdrawals = () => {
   const [withdrawCoin, setWithDrawCoin] = useState(null);
   const [convertedUsd, setConvertedUsd] = useState(null);
   const { register, handleSubmit, reset } = useForm();
-  const {theme} = useContext(ThemeContext)
+  const { theme } = useContext(ThemeContext);
+
   const {
     data: amountInfo = [],
     isLoading,
@@ -22,7 +23,6 @@ const Withdrawals = () => {
     queryFn: async () => {
       const { data } = await axiosSecure.get(`api/users/me/${user?.email}`);
       console.log(data);
-
       return data;
     },
   });
@@ -35,13 +35,11 @@ const Withdrawals = () => {
 
   const handleWithdrawSubmit = async (data) => {
     console.log(data);
-
     console.log(withdrawCoin);
-    // Perform withdrawal logic
     const date = new Date();
 
     if (amountInfo?.coin < withdrawCoin) {
-      return toast.error("Withdrawal coin exceeds Your total coin");
+      return toast.error("Withdrawal coin amount exceeds your available total balance");
     }
 
     const WithdrawalInfo = {
@@ -60,7 +58,7 @@ const Withdrawals = () => {
         WithdrawalInfo
       );
       console.log(data);
-      toast.success("Withdraw Request is Successful!!!");
+      toast.success("Withdrawal Request Submitted Successfully!");
       reset();
       refetch();
       setConvertedUsd(null);
@@ -70,27 +68,27 @@ const Withdrawals = () => {
   };
 
   return (
-    <div  className={`min-h-screen ${
-      theme === "light"
-        ? "bg-[#f9fafc] text-black"
-        : "dark:bg-black dark:text-white"
-    }`}>
+    <div
+      className={`min-h-screen ${
+        theme === "light"
+          ? "bg-[#f9fafc] text-black"
+          : "dark:bg-black dark:text-white"
+      }`}
+    >
       <div className="w-11/12 mx-auto">
         <div className="py-8">
           <h2 className="text-center font-bold text-3xl md:text-4xl py-3">
-            Effortless Withdrawals Hub
+            SINEX Earnings Withdrawal Hub
           </h2>
           <p className="md:w-[40%] mx-auto text-center">
-            Effortless Withdrawals Hub offers fast and secure financial
-            withdrawal services, ensuring smooth and reliable transactions for
-            all users.
+            Convert your earned reward coins into localized wallet balances fast and securely through our verified processing gateway.
           </p>
 
           <h2 className="font-bold text-3xl text-center py-4 mt-6">
-            Your Total Earning: {amountInfo.coin ? amountInfo.coin / 20 : 0}$
+            Your Total Balance: ${amountInfo.coin ? amountInfo.coin / 20 : 0} ({amountInfo.coin || 0} Coins)
           </h2>
         </div>
-        <div className=" md:w-[70%] lg:w-[50%] mx-auto pb-20">
+        <div className="md:w-[70%] lg:w-[50%] mx-auto pb-20">
           <div className="card bg-base-100 w-full shrink-0 shadow-2xl">
             <form
               onSubmit={handleSubmit(handleWithdrawSubmit)}
@@ -98,25 +96,24 @@ const Withdrawals = () => {
             >
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Coin To Withdraw</span>
+                  <span className="label-text">Coins To Withdraw</span>
                 </label>
                 <input
                   type="number"
-                  // {...register("coin")}
                   onChange={handleWithdrawCoin}
-                  placeholder="Coin To Withdraw"
+                  placeholder="Enter coin amount"
                   className="input input-bordered"
                   required
                 />
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Withdraw amount</span>
+                  <span className="label-text">Equivalent Amount ($ USD)</span>
                 </label>
                 <input
                   type="number"
-                  defaultValue={convertedUsd}
-                  placeholder="Withdraw amount"
+                  value={convertedUsd || ""}
+                  placeholder="Withdraw amount ($)"
                   className="input input-bordered"
                   required
                   readOnly
@@ -124,12 +121,12 @@ const Withdrawals = () => {
               </div>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text">Account Number</span>
+                  <span className="label-text">Account / Wallet Number</span>
                 </label>
                 <input
                   type="number"
                   {...register("accountNumber")}
-                  placeholder="Account Number"
+                  placeholder="Enter account / wallet number"
                   className="input input-bordered"
                   required
                 />
@@ -141,23 +138,26 @@ const Withdrawals = () => {
                 <select
                   {...register("paymentMethod")}
                   className="select select-bordered w-full max-w-xs"
+                  defaultValue=""
+                  required
                 >
-                  <option disabled selected>
+                  <option disabled value="">
                     Select Payment Method
                   </option>
-                  <option value="bkash">bkash</option>
+                  <option value="bkash">bKash</option>
                   <option value="Nagad">Nagad</option>
                   <option value="Rocket">Rocket</option>
+                  <option value="BankTransfer">Bank Transfer / Local Wallet</option>
                 </select>
               </div>
               <div className="form-control mt-6">
                 {amountInfo.coin <= 200 ? (
                   <h2 className="text-red-500 font-bold text-xl text-center">
-                    Insufficient coin
+                    Insufficient Balance (Minimum 200 Coins Required)
                   </h2>
                 ) : (
-                  <button className="btn bg-accent hover:bg-accent text-white font-bold">
-                    Withdraw
+                  <button className="btn bg-[#00d7c0] hover:bg-[#00bfa8] border-none text-slate-950 font-bold">
+                    Request Withdrawal
                   </button>
                 )}
               </div>

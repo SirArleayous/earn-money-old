@@ -16,18 +16,18 @@ const TopRatedTaskDetails = () => {
   const axiosSecure = useAxiosSecure();
   const [showLoginModal, setShowLoginModal] = useState(false);
 
-  // Check if user is logged in and is a worker
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://earn-money-server-5.onrender.com";
+
   useEffect(() => {
     if (!user) {
       setShowLoginModal(true);
-      document.getElementById("login_required_modal").showModal();
-    } else if (role && role !== "Worker") {
+      document.getElementById("login_required_modal")?.showModal();
+    } else if (role && role !== "Worker" && role !== "User") {
       setShowLoginModal(true);
-      document.getElementById("worker_required_modal").showModal();
+      document.getElementById("worker_required_modal")?.showModal();
     }
   }, [user, role]);
 
-  // Fetch task details
   const {
     data: taskDetail = {},
     isLoading,
@@ -36,11 +36,8 @@ const TopRatedTaskDetails = () => {
     queryKey: ["topRatedTaskDetail", id],
     queryFn: async () => {
       try {
-        // Use the homePostedTasks endpoint which is public
-        // This is a workaround since we don't have a specific public endpoint for a single task
-        const { data } = await axios.get(`https://earn-money-server-5.onrender.com/homePostedTasks`);
-        // Find the specific task by ID
-        const task = data.find(task => task._id === id);
+        const { data } = await axios.get(`${backendUrl}/homePostedTasks`);
+        const task = Array.isArray(data) ? data.find((t) => t._id === id) : {};
         return task || {};
       } catch (error) {
         console.error("Error fetching task details:", error);
@@ -69,19 +66,16 @@ const TopRatedTaskDetails = () => {
     buyerInfo,
   } = taskDetail || {};
 
-  // Format date
   let dateFormatted = "N/A";
   if (completionDate) {
     let date = new Date(completionDate);
     dateFormatted = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
   }
 
-  // Handle login redirect
   const handleLoginRedirect = () => {
     navigate("/login");
   };
 
-  // Handle dashboard redirect
   const handleDashboardRedirect = () => {
     navigate("/dashboard/taskLists");
   };
@@ -97,10 +91,10 @@ const TopRatedTaskDetails = () => {
       <div className="w-[90%] mx-auto">
         <div className="py-8">
           <h2 className="font-bold text-center text-3xl">
-            Task Details
+            SINEX Task Details
           </h2>
           <p className="py-3 text-center md:w-[60%] mx-auto">
-            Discover all the information about this task, including requirements, payment, and deadlines.
+            Discover complete specifications for this campaign task, including worker requirements, reward payouts, and completion dates.
           </p>
         </div>
         <div className="lg:flex gap-4">
@@ -109,7 +103,7 @@ const TopRatedTaskDetails = () => {
               <img
                 className="w-full h-[350px] object-cover"
                 src={taskImage}
-                alt={title}
+                alt={title || "Task"}
               />
             </figure>
             <div className="card-body">
@@ -129,25 +123,29 @@ const TopRatedTaskDetails = () => {
                   <span className="btn ml-2">{worker}</span>
                 </p>
                 <p className="py-2 border-b pb-6">
-                  <span className="font-bold text-xl">Payment:</span>
+                  <span className="font-bold text-xl">Reward Payment:</span>
                   <span className="btn ml-2">{payment}.00$</span>
                 </p>
               </div>
 
-              {user && role === "Worker" ? (
+              {user && (role === "Worker" || role === "User") ? (
                 <div className="mt-4">
                   <button
                     onClick={handleDashboardRedirect}
-                    className="btn bg-[#00d7c0] hover:bg-[#00d7c0] text-white border-none"
+                    className="btn bg-[#00d7c0] hover:bg-[#00bfa8] text-slate-950 font-bold border-none"
                   >
-                    Go to Task List
+                    Go to Task Directory
                   </button>
                 </div>
               ) : (
                 <div className="mt-4">
                   <button
-                    onClick={() => document.getElementById(user ? "worker_required_modal" : "login_required_modal").showModal()}
-                    className="btn bg-[#00d7c0] hover:bg-[#00d7c0] text-white border-none"
+                    onClick={() =>
+                      document
+                        .getElementById(user ? "worker_required_modal" : "login_required_modal")
+                        ?.showModal()
+                    }
+                    className="btn bg-[#00d7c0] hover:bg-[#00bfa8] text-slate-950 font-bold border-none"
                   >
                     Apply for Task
                   </button>
@@ -163,27 +161,33 @@ const TopRatedTaskDetails = () => {
         <form method="dialog" className="modal-box">
           <h3 className="font-bold text-lg text-black">Login Required!</h3>
           <p className="py-4 text-black">
-            You need to login as a worker to view and apply for this task.
+            You need to log in as a user to view and execute this task.
           </p>
           <div className="modal-action">
             <button className="btn">Close</button>
-            <button onClick={handleLoginRedirect} className="btn bg-[#00d7c0] hover:bg-[#00d7c0] text-white border-none">
+            <button
+              onClick={handleLoginRedirect}
+              className="btn bg-[#00d7c0] hover:bg-[#00bfa8] text-slate-950 font-bold border-none"
+            >
               Login Now
             </button>
           </div>
         </form>
       </dialog>
 
-      {/* Worker Role Required Modal */}
+      {/* Role Required Modal */}
       <dialog id="worker_required_modal" className="modal">
         <form method="dialog" className="modal-box">
-          <h3 className="font-bold text-lg text-black">Worker Account Required!</h3>
+          <h3 className="font-bold text-lg text-black">User Account Required!</h3>
           <p className="py-4 text-black">
-            You are logged in, but you need a worker account to apply for tasks. Please contact admin to change your role to worker.
+            You are logged in with a client profile. Please switch or access your worker account to apply for tasks.
           </p>
           <div className="modal-action">
             <button className="btn">Close</button>
-            <button onClick={handleDashboardRedirect} className="btn bg-[#00d7c0] hover:bg-[#00d7c0] text-white border-none">
+            <button
+              onClick={handleDashboardRedirect}
+              className="btn bg-[#00d7c0] hover:bg-[#00bfa8] text-slate-950 font-bold border-none"
+            >
               Go to Dashboard
             </button>
           </div>

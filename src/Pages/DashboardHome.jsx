@@ -17,8 +17,8 @@ const DashboardHome = () => {
   return (
     <div>
       {role === "Admin" && <AdminHome></AdminHome>}
-      {role === "Buyer" && <BuyerHome></BuyerHome>}
-      {role === "Worker" && <WorkerHome></WorkerHome>}
+      {(role === "Buyer" || role === "Client") && <BuyerHome></BuyerHome>}
+      {(role === "Worker" || role === "User") && <WorkerHome></WorkerHome>}
     </div>
   );
 };

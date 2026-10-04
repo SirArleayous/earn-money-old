@@ -4,12 +4,17 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: "class",
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        sinex: {
+          primary: '#00d7c0',
+          secondary: '#0F172A',
+          accent: '#2563EB',
+          light: '#F8FAFC',
+        }
+      }
+    },
   },
-  plugins: [
-    require('daisyui'),
-  ],
+  plugins: [],
 }
-

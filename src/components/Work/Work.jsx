@@ -1,6 +1,7 @@
 import React from "react";
 import { motion } from "motion/react";
 import { NavLink } from "react-router-dom";
+
 const Work = () => {
   return (
     <div className="w-11/12 mx-auto py-20">
@@ -9,7 +10,7 @@ const Work = () => {
           <div className="w-[50%]">
             <img
               src="https://toka.peerduck.com/wp-content/uploads/2022/02/cryptophone.png"
-              alt=""
+              alt="Platform"
             />
           </div>
           <motion.div
@@ -24,7 +25,7 @@ const Work = () => {
           >
             <img
               src="https://toka.peerduck.com/wp-content/uploads/2022/02/graph-crypto-trading.png"
-              alt=""
+              alt="Analytics"
             />
           </motion.div>
           <motion.div
@@ -39,26 +40,23 @@ const Work = () => {
           >
             <img
               src="https://toka.peerduck.com/wp-content/uploads/2022/02/stocks.png"
-              alt=""
+              alt="Growth"
             />
           </motion.div>
         </div>
         <div className="lg:w-[50%] flex flex-col justify-center py-10 lg:py-0">
           <h2 className="text-[#00d7c0] text-xl font-bold">
-            What dose our platform do ?
+            What does SINEX deliver?
           </h2>
           <h3 className="font-bold text-5xl py-4 leading-tight">
             Turn Simple Tasks into <br /> Real-World Rewards
           </h3>
           <p>
-            Earnify is a platform where users can earn coins by completing
-            tasks, surveys, and other activities. These coins can be redeemed
-            for real money, gift cards, or other rewards, making it a simple way
-            to turn your time into earnings.
+            SINEX is a multi-country platform where users earn reward coins by completing verified tasks, digital campaigns, and community engagements. Earned rewards convert smoothly into localized currency balances, offering a seamless route to monetize time and effort.
           </p>
           <div className="my-6">
-            <NavLink to="/about" className="mt-8 lg:mt-0 ">
-              <button className="rounded-md font-bold bg-[#00d7c0] text-white border-none py-3 px-6">
+            <NavLink to="/about" className="mt-8 lg:mt-0">
+              <button className="rounded-md font-bold bg-[#00d7c0] text-slate-950 hover:bg-[#00bfa8] border-none py-3 px-6">
                 Learn More
               </button>
             </NavLink>

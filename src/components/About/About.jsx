@@ -1,107 +1,100 @@
-import React from "react";
+import React, { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeContext";
 
-const About = () => {
+const Faq = () => {
+  const { theme } = useContext(ThemeContext);
+
   return (
-    <div className="w-11/12 mx-auto">
-      <div className="text-center pb-4 pt-44">
-        <h3 className="text-accent text-xl font-bold">Our Story</h3>
-        <h2 className="text-5xl font-bold pt-2">About our Platform</h2>
-        <p className=" py-4 w-[60%] mx-auto">
-          Micro-tasking earning platform where users can complete simple tasks
-          and earn money instantly. We connect businesses with task solvers
-          worldwide, offering diverse earning opportunities like data entry,
-          surveys, and testing. Join us today and start earning!
-        </p>
-      </div>
-      <div className="pb-10 text-center w-[80%] mx-auto">
-        <img
-          className="rounded-xl"
-          src="https://toka.peerduck.com/wp-content/uploads/2022/03/businesspeople-meeting-office-working-1.png"
-          alt=""
-        />
-      </div>
-      <div className="w-[80%] mx-auto pt-24">
-        <div className="grid lg:grid-cols-2 gap-8">
-          <div className="w-[90%]">
-            <h3 className="text-accent text-xl pb-4 font-bold">Our Mission</h3>
-            <h2 className="text-4xl font-bold ">
-              We are helping people to get a success.
-            </h2>
-          </div>
-          <div className="">
-            <p className="pt-1.5 pb-4 italic">
-              At Micro Tasking Earning Platform, we are dedicated to helping
-              people achieve success by providing opportunities to earn, grow,
-              and thrive. Whether you're looking for extra income, flexible
-              work, or new skills, our platform empowers you to take control of
-              your financial future. Join us and start your journey to success
-              today!
-            </p>
-          </div>
+    <div
+      className={`w-11/12 mx-auto p-8 rounded-lg space-y-4 ${
+        theme === "light"
+          ? "bg-[#eaeaea] text-black"
+          : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+      }`}
+    >
+      <div>
+        <div className="py-6">
+          <h2 className="text-4xl font-bold text-center">
+            Frequently Asked Questions
+          </h2>
+          <p className="text-center md:w-[50%] mx-auto py-3">
+            Find answers to common questions about the SINEX ecosystem and services.
+          </p>
         </div>
       </div>
-      {/* Card section */}
-      <div className="w-[80%] mx-auto py-10">
-        <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-9">
-          <div className="card shadow-xl">
-            <div className="card-body">
-              <div className="">
-                <img
-                  className="w-20 mx-auto"
-                  src="https://toka.peerduck.com/wp-content/uploads/2022/03/cash-back.png"
-                  alt=""
-                />
-              </div>
-              <h2 className="font-bold text-2xl text-center py-4">
-                Transparency
-              </h2>
-              <p className="text-center">
-                We ensure honesty, fair payments, clear guidelines, and no
-                hidden fees for a trustworthy earning experience.
-              </p>
-            </div>
-          </div>
-          <div className="card  shadow-xl">
-            <div className="card-body">
-              <div className="">
-                <img
-                  className="w-20 mx-auto"
-                  src="https://toka.peerduck.com/wp-content/uploads/2022/03/rating.png"
-                  alt=""
-                />
-              </div>
-              <h2 className="font-bold text-2xl text-center py-4">
-                Experienced Team
-              </h2>
-              <p className="text-center">
-                Our expert team brings years of experience in technology and
-                business, ensuring a seamless, secure, and user-friendly
-                micro-tasking platform.
-              </p>
-            </div>
-          </div>
-          <div className="card  shadow-xl">
-            <div className="card-body">
-              <div className="">
-                <img
-                  className="w-20 mx-auto"
-                  src="https://toka.peerduck.com/wp-content/uploads/2022/03/protection.png"
-                  alt=""
-                />
-              </div>
-              <h2 className="font-bold text-2xl text-center py-4">
-                Security Guarantee
-              </h2>
-              <p className="text-center">
-                We ensure secure transactions, data protection, and a fraud-free
-                environment, keeping your earnings and information safe.
-              </p>
-            </div>
-          </div>
+
+      <div
+        className={`collapse collapse-plus rounded-lg shadow-lg border border-base-300 ${
+          theme === "light"
+            ? "bg-[#eaeaea] text-black"
+            : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+        }`}
+      >
+        <input type="radio" name="my-accordion-3" defaultChecked />
+        <div className="collapse-title font-semibold">
+          How Can I Earn Rewards As A User?
+        </div>
+        <div className="collapse-content text-sm">
+          First of all, sign up as a User. Then go to your dashboard, click on the
+          available tasks list, and complete the task according to the given
+          instructions. Once your submitted evidence is approved, your reward will
+          be added directly to your wallet balance in your regional currency.
+        </div>
+      </div>
+
+      <div
+        className={`collapse collapse-plus rounded-lg shadow-lg border border-base-300 ${
+          theme === "light"
+            ? "bg-[#eaeaea] text-black"
+            : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+        }`}
+      >
+        <input type="radio" name="my-accordion-3" />
+        <div className="collapse-title font-semibold">
+          How Can I Get My Tasks Executed As A Client/Business?
+        </div>
+        <div className="collapse-content text-sm">
+          First of all, sign up as a Client/Business. Go to your client dashboard,
+          click on add new campaign or task, set your budget, and provide clear
+          instructions. Verified users will complete your tasks and submit
+          proof for your review and approval.
+        </div>
+      </div>
+
+      <div
+        className={`collapse collapse-plus rounded-lg shadow-lg border border-base-300 ${
+          theme === "light"
+            ? "bg-[#eaeaea] text-black"
+            : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+        }`}
+      >
+        <input type="radio" name="my-accordion-3" />
+        <div className="collapse-title font-semibold">
+          How Can I Fund My Client Wallet To Launch Tasks?
+        </div>
+        <div className="collapse-content text-sm">
+          Navigate to the Deposit/Wallet section in your Client Dashboard and fund your
+          account balance following the secure payment steps provided.
+        </div>
+      </div>
+
+      <div
+        className={`collapse collapse-plus rounded-lg shadow-lg border border-base-300 ${
+          theme === "light"
+            ? "bg-[#eaeaea] text-black"
+            : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
+        }`}
+      >
+        <input type="radio" name="my-accordion-3" />
+        <div className="collapse-title font-semibold">
+          How Can I Withdraw My Wallet Balance?
+        </div>
+        <div className="collapse-content text-sm">
+          As a User, go to your dashboard, select the Withdrawals tab, fill in your payment details and requested amount, and submit it for admin processing.
         </div>
       </div>
     </div>
   );
 };
 
-export default About;
+export default Faq;

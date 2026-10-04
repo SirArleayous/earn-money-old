@@ -5,6 +5,7 @@ import useAxiosSecure from "./../../Hooks/useAxiosSecure";
 import useAuth from "../../Hooks/useAuth";
 import "./Pagination.css";
 import { ThemeContext } from "../../context/ThemeContext";
+
 const MySubmissions = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
@@ -26,7 +27,6 @@ const MySubmissions = () => {
       return data;
     },
   });
-  //
 
   console.log(mySubmissions);
 
@@ -55,43 +55,39 @@ const MySubmissions = () => {
 
   return (
     <div
-    className={`min-h-screen ${
-      theme === "light"
-        ? "bg-[#f9fafc] text-black"
-        : "dark:bg-black dark:text-white"
-    }`}
+      className={`min-h-screen ${
+        theme === "light"
+          ? "bg-[#f9fafc] text-black"
+          : "dark:bg-black dark:text-white"
+      }`}
     >
       <div className="w-[90%] mx-auto">
         <div className="py-8">
           <h2 className="font-bold text-3xl md:text-4xl text-center">
-            My Submission
+            My Task Submissions
           </h2>
           <p className="md:w-[50%] mx-auto py-3 text-center">
-            Stay informed about the status of your submissions. Receive timely
-            notifications for every task submitted, reviewed, or approved,
-            keeping you connected with your workflow.
+            Track the review status of your task evidence submissions in real time across active SINEX campaigns.
           </p>
         </div>
         <div className="overflow-x-auto">
           <table className="table">
-            {/* head */}
             <thead>
               <tr
-                className={` ${
-                  theme === "light" ? " text-black" : " dark:text-white"
+                className={`${
+                  theme === "light" ? "text-black" : "dark:text-white"
                 }`}
               >
-                <th>Title</th>
-                <th>Detail</th>
+                <th>Task Title</th>
+                <th>Submission Detail</th>
                 <th>Date</th>
-                <th>Payment</th>
+                <th>Reward Payment</th>
                 <th>Status</th>
-                <th>Buyer Name</th>
-                <th>Buyer Email</th>
+                <th>Client Name</th>
+                <th>Client Email</th>
               </tr>
             </thead>
             <tbody>
-              {/* row 1 */}
               {mySubmissions.map((mySubmit, index) => (
                 <MySubmissionTable
                   key={index}
@@ -119,13 +115,6 @@ const MySubmissions = () => {
           <button onClick={handleNext} className="btn ml-2">
             Next
           </button>
-          {/* <select onChange={handleItemsPerPage} name="" id="">
-          <option value="select">Select</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-        </select> */}
         </div>
       </div>
     </div>

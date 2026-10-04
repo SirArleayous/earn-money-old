@@ -12,74 +12,71 @@ const Contact = () => {
               <div>
                 <h4 className="text-xl font-bold">Contact Us</h4>
                 <h2 className="text-4xl font-bold pt-2.5 pb-6">
-                  Are you interested in online Earning? Contact us
+                  Are you interested in digital opportunities with SINEX? Contact us
                 </h2>
                 <p>
-                Explore a range of online earning opportunities through Earnify and start building your income from the comfort of your home. Whether you're a student, freelancer, or looking for side gigs, we connect you with real tasks that match your skills. Join now and let us guide you toward flexible, reliable ways to earn online. Reach out today to get started!
+                  Explore a range of multi-country digital opportunities and task campaigns through SINEX (SirArleayous Innovation Nexus Ltd) and build your reward balance seamlessly across regional markets. Whether you are a user, client, freelancer, or enterprise partner, we connect you with verified campaigns that match your goals. Join now and let us guide you toward flexible, reliable growth on SINEX. Reach out today to get started!
                 </p>
 
                 <div className="pt-12">
                   <img
                     src="https://edify-official.vercel.app/assets/sign.svg"
-                    alt=""
+                    alt="Signature"
                   />
                 </div>
-                <h2 className="font-bold text-xl pb-1.5">Brayden Backham</h2>
-                <p>DIRECTOR</p>
+                <h2 className="font-bold text-xl pb-1.5">SirArleayous Team</h2>
+                <p>EXECUTIVE DIRECTOR</p>
               </div>
             </div>
 
             <div>
-
-            <div className="flex items-center">
-              <div className="card bg-white w-full shadow-2xl ">
-                <form className="card-body py-16">
-                  <div
-                  
-                  >
-                    <h2 className="text-4xl font-bold text-left text-black">
-                      Fill out for contact
-                    </h2>
-                    <p className="text-left pb-5 text-black">
-                      We are here to help with any questions or details you
-                      need. Reach out today!
-                    </p>
-                  </div>
-                  <div className="form-control pb-2">
-                    <input
-                      type="name"
-                      placeholder="Name"
-                      name="from_name"
-                      className="border  p-4 rounded-md"
-                      required
-                    />
-                  </div>
-                  <div className="form-control  pb-2">
-                    <input
-                      type="email"
-                      name="from_name"
-                      placeholder="Email"
-                      className="border  p-4 rounded-md"
-                      required
-                    />
-                  </div>
-                  <div className="form-control  pb-2">
-                    <textarea
-                      type="text"
-                      name="message"
-                      placeholder="Message"
-                      className="border  p-6 pb-14 rounded-md"
-                      required
-                    />
-                  </div>
-                  <div className="form-control mt-6">
-                    <button className="md:w-[45%] bg-accent font-bold text-white px-10 py-4 rounded-xl shadow-lg border">
-                      Send Message
-                    </button>
-                  </div>
-                </form>
+              <div className="flex items-center">
+                <div className="card bg-white w-full shadow-2xl ">
+                  <form className="card-body py-16">
+                    <div>
+                      <h2 className="text-4xl font-bold text-left text-black">
+                        Fill out for contact
+                      </h2>
+                      <p className="text-left pb-5 text-black">
+                        We are here to help with any questions or details you
+                        need regarding SINEX platform operations. Reach out today!
+                      </p>
+                    </div>
+                    <div className="form-control pb-2">
+                      <input
+                        type="name"
+                        placeholder="Name"
+                        name="from_name"
+                        className="border p-4 rounded-md"
+                        required
+                      />
+                    </div>
+                    <div className="form-control pb-2">
+                      <input
+                        type="email"
+                        name="from_name"
+                        placeholder="Email"
+                        className="border p-4 rounded-md"
+                        required
+                      />
+                    </div>
+                    <div className="form-control pb-2">
+                      <textarea
+                        type="text"
+                        name="message"
+                        placeholder="Message"
+                        className="border p-6 pb-14 rounded-md"
+                        required
+                      />
+                    </div>
+                    <div className="form-control mt-6">
+                      <button className="md:w-[45%] bg-accent font-bold text-white px-10 py-4 rounded-xl shadow-lg border">
+                        Send Message
+                      </button>
+                    </div>
+                  </form>
+                </div>
               </div>
-            </div>
             </div>
 
           </div>

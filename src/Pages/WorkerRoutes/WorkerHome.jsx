@@ -8,10 +8,12 @@ import useAxiosSecure from "../../Hooks/useAxiosSecure";
 import ApprovedSubmissions from "./ApprovedSubmissions";
 import ApexCharts from "../../components/ApexCharts/ApexCharts";
 import { ThemeContext } from "../../context/ThemeContext";
+
 const WorkerHome = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const { theme } = useContext(ThemeContext);
+
   const {
     data: { result: myTotalSubmissions = [], total = 0 } = {},
     isLoading,
@@ -24,9 +26,9 @@ const WorkerHome = () => {
       return data;
     },
   });
+
   const { data: pendingSubmissions = [] } = useQuery({
     queryKey: ["pendingSubmissions", user?.email],
-
     queryFn: async () => {
       const { data } = await axiosSecure.get(
         `api/worker/pending/${user?.email}`
@@ -35,8 +37,6 @@ const WorkerHome = () => {
       return data;
     },
   });
-
-  // const totalBuyers = allInfo.filter(user => user.role === "Buyer").length;
 
   const totalApprovedData = myTotalSubmissions.filter(
     (approve) => approve.status === "Approve"
@@ -50,17 +50,17 @@ const WorkerHome = () => {
 
   console.log(myTotalSubmissions);
   console.log(pendingSubmissions);
-  // #d4ceca
+
   return (
     <div
-      className={`= ${
+      className={`${
         theme === "light"
           ? "backdrop-blur-xl bg-[#f9fafc] text-black"
           : "dark:bg-black dark:text-white"
       }`}
     >
-      <h2 className="font-bold text-2xl p-10 pb-0 ">
-        ProfitHub 360: Your Earnings Dashboard at a Glance
+      <h2 className="font-bold text-2xl p-10 pb-0">
+        SINEX User Dashboard: Earnings & Task Analytics
       </h2>
       <div className="p-10 lg:flex gap-3 justify-between">
         <div className="lg:w-[70%]">
@@ -74,11 +74,11 @@ const WorkerHome = () => {
                 : "dark:bg-gradient-to-r from-[#020710] to-[#1b2028] dark:text-white"
             } z-10`}
           >
-            <h2 className="font-bold text-center  py-6 text-3xl">
-              Approval Submission
+            <h2 className="font-bold text-center py-6 text-3xl">
+              Approved Task Submissions
             </h2>
             <ApprovedSubmissions
-            theme={theme}
+              theme={theme}
               totalApprovedData={totalApprovedData}
             ></ApprovedSubmissions>
           </div>
@@ -87,27 +87,28 @@ const WorkerHome = () => {
           <div
             className={`space-y-3 p-6 shadow-2xl rounded-xl ${
               theme === "light"
-                ? "backdrop-blur-xl bg-[#FFFFFF] "
+                ? "backdrop-blur-xl bg-[#FFFFFF]"
                 : "dark:bg-gradient-to-r from-[#020710] to-[#1b2028] dark:text-white"
             } z-10`}
           >
-            <div className="stats shadow w-full bg-[#54ade7] text-white">
+            <div className="stats shadow w-full bg-[#00d7c0] text-slate-950">
               <div className="stat">
-                <div className="stat-title text-center text-white font-bold">
-                  Total Submission
+                <div className="stat-title text-center text-slate-900 font-bold">
+                  Total Submissions
                 </div>
-                <button className="font-bold text-2xl py-3 flex justify-center">
+                <button className="font-bold text-2xl py-3 flex justify-center text-slate-950">
                   <VscFileSubmodule></VscFileSubmodule>
                 </button>
-                <div className="stat-value text-center">
+                <div className="stat-value text-center text-slate-950">
                   {myTotalSubmissions.length}
                 </div>
               </div>
             </div>
+
             <div className="stats shadow w-full bg-[#6330bc] text-white">
               <div className="stat">
                 <div className="stat-title text-center text-white font-bold">
-                  Total Pending Submission
+                  Pending Submissions
                 </div>
                 <button className="font-bold text-2xl py-3 flex justify-center">
                   <MdOutlinePendingActions></MdOutlinePendingActions>
@@ -118,22 +119,22 @@ const WorkerHome = () => {
               </div>
             </div>
 
-            <div className="stats shadow w-full bg-[#00e396] text-white">
+            <div className="stats shadow w-full bg-[#00e396] text-slate-950">
               <div className="stat">
-                <div className="stat-title text-center text-white font-bold">
-                  Total Earning
+                <div className="stat-title text-center text-slate-900 font-bold">
+                  Total Earnings (Coins)
                 </div>
-                <button className="font-bold text-2xl py-3 flex justify-center">
+                <button className="font-bold text-2xl py-3 flex justify-center text-slate-950">
                   <RiCoinsLine></RiCoinsLine>
                 </button>
-                <div className="stat-value text-center">{totalEarning}</div>
+                <div className="stat-value text-center text-slate-950">{totalEarning}</div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="w-[75%] mx-auto "></div>
+      <div className="w-[75%] mx-auto"></div>
     </div>
   );
 };

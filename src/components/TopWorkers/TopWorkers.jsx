@@ -4,6 +4,8 @@ import Worker from "./Worker";
 import axios from "axios";
 
 const TopWorkers = () => {
+  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://earn-money-server-5.onrender.com";
+
   const {
     data: TopWorkers = [],
     isLoading,
@@ -11,9 +13,14 @@ const TopWorkers = () => {
   } = useQuery({
     queryKey: ["TopWorkers"],
     queryFn: async () => {
-      const { data } = await axios.get(`https://earn-money-server-5.onrender.com/api/users/top-workers`);
-      console.log(data);
-      return data;
+      try {
+        const { data } = await axios.get(`${backendUrl}/api/users/top-workers`);
+        console.log(data);
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Top workers fetch warning:", error);
+        return [];
+      }
     },
   });
 
@@ -22,17 +29,15 @@ const TopWorkers = () => {
   return (
     <div className="w-11/12 mx-auto pb-10 pt-12">
       <div className="pt-10">
-        <h2 className="font-bold text-4xl text-center">Top Achieving Workers</h2>
+        <h2 className="font-bold text-4xl text-center">Top Achieving SINEX Users</h2>
         <p className="text-center md:w-[45%] mx-auto py-3">
-          Discover our dedicated professionals who excel in their fields. From
-          innovative blockchain architects to inspiring CEOs, our top workers
-          are here to deliver excellence and drive success.
+          Recognizing our top platform contributors who excel in task execution and maintain consistent performance across regional campaigns.
         </p>
       </div>
       <div className="grid md:grid-cols-3 sm:grid-cols-2 gap-5 my-10 mx-auto">
-        {
-            TopWorkers.map((TopWorker,index) => <Worker key={index} TopWorker={TopWorker} ></Worker>)
-        }
+        {TopWorkers.map((TopWorker, index) => (
+          <Worker key={index} TopWorker={TopWorker}></Worker>
+        ))}
       </div>
     </div>
   );

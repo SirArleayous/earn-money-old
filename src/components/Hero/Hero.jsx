@@ -18,7 +18,7 @@ const Hero = () => {
   return (
     <div className="relative pt-36">
       <div className="absolute right-0 w-[40%] top-[340px] z-10 lg:flex hidden">
-        <img src={heroHand} className="" alt="" />
+        <img src={heroHand} className="" alt="SINEX Opportunity" />
       </div>
       <div className="lg:h-screen w-11/12 mx-auto">
         <Swiper
@@ -30,12 +30,13 @@ const Hero = () => {
             disableOnInteraction: false, // Allow autoplay to continue after user interaction
           }}
           rtl={true} // Enable right-to-left layout
-          loop={true} // E
+          loop={true}
           speed={1000}
           freeMode={true}
           modules={[Autoplay]}
           className="mySwiper"
         >
+          {/* Slide 1 */}
           <SwiperSlide>
             <div className="lg:flex justify-between">
               <div className="lg:w-[50%] md:w-[70%] w-[90%] mx-auto lg:mx-0 flex items-center">
@@ -51,22 +52,21 @@ const Hero = () => {
                     <span className="text-[#00d7c0] font-bold">
                       Discover
                     </span>{" "}
-                    how to earn more
+                    SINEX Opportunities
                   </p>
-                  <h1 className="font-bold xl:leading-tight  text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4 ">
-                  Make Your <span className="text-[#00d7c0]">money</span>.{" "}  Anytime, Anywhere,  
+                  <h1 className="font-bold xl:leading-tight text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4 ">
+                    Build Your <span className="text-[#00d7c0]">rewards</span>.{" "}
+                    Anytime, Anywhere,
                     <br /> Effortlessly!
                   </h1>
-                
+
                   <p className=" lg:text-left text-center py-3 leading-normal lg:w-[80%]">
-                    Make money anytime, anywhere with the freedom to work when
-                    and where you want, balancing income and lifestyle
-                    seamlessly.
+                    Access legitimate micro-tasks and research opportunities across global markets with the freedom to execute tasks on your own schedule.
                   </p>
-                  
+
                   <div className="md:flex space-y-2 md:space-y-2 gap-6 items-center justify-center lg:justify-start pt-5">
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -76,11 +76,11 @@ const Hero = () => {
                         <CountUp end={2} />
                         M+
                       </h2>
-                      <p className=" py-4">Profit Growth</p>
+                      <p className=" py-4">Global Tasks</p>
                     </div>
 
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -89,10 +89,10 @@ const Hero = () => {
                       <h2 className="text-5xl text-[#00d7c0] font-bold">
                         <CountUp end={90} />K
                       </h2>
-                      <p className=" py-4">Earning Boost</p>
+                      <p className=" py-4">Active Users</p>
                     </div>
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -101,7 +101,7 @@ const Hero = () => {
                       <h2 className="text-5xl text-[#00d7c0] font-bold">
                         <CountUp end={12.5} />K
                       </h2>
-                      <p className=" py-4">Quick Rewards</p>
+                      <p className=" py-4">Daily Rewards</p>
                     </div>
                   </div>
                 </div>
@@ -118,11 +118,13 @@ const Hero = () => {
                   }}
                   className="w-[50%] flex justify-end mx-auto"
                 >
-                  <img src={diamond2} alt="Diamond" />
+                  <img src={diamond2} alt="SINEX Rewards" />
                 </motion.div>
               </div>
             </div>
           </SwiperSlide>
+
+          {/* Slide 2 */}
           <SwiperSlide>
             <div className="lg:flex justify-between">
               <div className="lg:w-[50%] md:w-[70%] w-[90%] mx-auto lg:mx-0 flex items-center">
@@ -138,20 +140,19 @@ const Hero = () => {
                     <span className="text-[#00d7c0] font-bold">
                       Discover
                     </span>{" "}
-                    how to earn more
+                    Multi-Currency Wallets
                   </p>
-                  <h1 className="font-bold xl:leading-tight  text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4 ">
-                  Earn Your <span className="text-[#00d7c0]">money</span>.{" "}  Anytime, Anywhere,  
+                  <h1 className="font-bold xl:leading-tight text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4 ">
+                    Earn Your <span className="text-[#00d7c0]">balance</span>.{" "}
+                    Anytime, Anywhere,
                     <br /> Instantly!
                   </h1>
                   <p className=" lg:text-left text-center py-3 leading-normal lg:w-[80%]">
-                    Make money anytime, anywhere with the freedom to work when
-                    and where you want, balancing income and lifestyle
-                    seamlessly.
+                    Execute verified campaigns for top regional clients and receive immediate payouts straight to your preferred localized currency wallet.
                   </p>
                   <div className="md:flex space-y-2 md:space-y-2 gap-6 items-center justify-center lg:justify-start pt-5">
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -161,11 +162,11 @@ const Hero = () => {
                         <CountUp end={4} />
                         M+
                       </h2>
-                      <p className=" py-4">Growth Path</p>
+                      <p className=" py-4">Total Payouts</p>
                     </div>
 
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -174,10 +175,10 @@ const Hero = () => {
                       <h2 className="text-5xl text-[#00d7c0] font-bold">
                         <CountUp end={95} />K
                       </h2>
-                      <p className=" py-4">Success Drive</p>
+                      <p className=" py-4">Verified Submissions</p>
                     </div>
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -186,7 +187,7 @@ const Hero = () => {
                       <h2 className="text-5xl text-[#00d7c0] font-bold">
                         <CountUp end={44.5} />K
                       </h2>
-                      <p className=" py-4">Fast Earnings</p>
+                      <p className=" py-4">Fast Withdrawals</p>
                     </div>
                   </div>
                 </div>
@@ -203,11 +204,13 @@ const Hero = () => {
                   }}
                   className="w-[60%] flex justify-end mx-auto"
                 >
-                  <img src={card} alt="Diamond" />
+                  <img src={card} alt="SINEX Wallet" />
                 </motion.div>
               </div>
             </div>
           </SwiperSlide>
+
+          {/* Slide 3 */}
           <SwiperSlide>
             <div className="lg:flex justify-between">
               <div className="lg:w-[50%] md:w-[70%] w-[90%] mx-auto lg:mx-0 flex items-center">
@@ -223,20 +226,18 @@ const Hero = () => {
                     <span className="text-[#00d7c0] font-bold">
                       Discover
                     </span>{" "}
-                    how to earn more
+                    Verified Campaigns
                   </p>
-                  <h1 className="font-bold xl:leading-tight  text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4">
+                  <h1 className="font-bold xl:leading-tight text-center lg:text-left text-3xl md:text-4xl lg:text-5xl xl:text-6xl py-4">
                     Boost Your <span className="text-[#00d7c0]">skills</span>.
                     Anytime, anywhere! <br /> Seamlessly!
                   </h1>
                   <p className=" lg:text-left text-center py-3 leading-normal lg:w-[80%]">
-                    Make money anytime, anywhere with the freedom to work when
-                    and where you want, balancing income and lifestyle
-                    seamlessly.
+                    Connect with enterprise campaigns, complete user research studies, and maximize your earnings with configurable multi-country bonuses.
                   </p>
                   <div className="md:flex space-y-2 md:space-y-2 gap-6 items-center justify-center lg:justify-start pt-5">
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -246,11 +247,11 @@ const Hero = () => {
                         <CountUp end={3} />
                         M+
                       </h2>
-                      <p className=" py-4">Winning Edge</p>
+                      <p className=" py-4">Campaign Rewards</p>
                     </div>
 
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -259,10 +260,10 @@ const Hero = () => {
                       <h2 className="text-5xl text-[#00d7c0] font-bold">
                         <CountUp end={85} />K
                       </h2>
-                      <p className=" py-4">Task Success</p>
+                      <p className=" py-4">Task Completed</p>
                     </div>
                     <div
-                      className={`rounded-xl px-7 py-4  text-center ${
+                      className={`rounded-xl px-7 py-4 text-center ${
                         theme === "light"
                           ? "bg-gradient-to-r from-[#d7d7d7] to-[#eaeaea] text-black"
                           : "bg-gradient-to-t from-[#27292f] to-[#10121d] text-white"
@@ -272,7 +273,7 @@ const Hero = () => {
                         <CountUp end={11} />
                         H+
                       </h2>
-                      <p className=" py-4">Bonus Time</p>
+                      <p className=" py-4">Welcome Bonuses</p>
                     </div>
                   </div>
                 </div>
@@ -289,7 +290,7 @@ const Hero = () => {
                   }}
                   className="w-[60%] flex justify-end mx-auto"
                 >
-                  <img src={diamond1} alt="Diamond" />
+                  <img src={diamond1} alt="SINEX Assets" />
                 </motion.div>
               </div>
             </div>

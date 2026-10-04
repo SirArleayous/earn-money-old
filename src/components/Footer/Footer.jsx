@@ -1,64 +1,65 @@
-import React from "react";
-import { FaXTwitter } from "react-icons/fa6";
-import { FaLinkedinIn } from "react-icons/fa6";
-import { RiGithubLine } from "react-icons/ri";
-const Footer = () => {
-  return (
-    <div className="bg-gradient-to-t from-[#10121d] to-[#10121d] py-16 px-10">
-      <div className="w-11/12 mx-auto lg:flex justify-between ">
-        <div className="">
-          <h2 className="font-bold text-4xl text-white">Earnify</h2>
-          <p className="text-white py-3">
-            Your gateway to earning <br /> more through freelancing and
-            investing.
-          </p>
-          <div className="flex pt-4 gap-4 text-white">
-            <div className="">
-              <a
-                href="www.linkedin.com/in/walidhasan87"
-                target="_blank"
-                className="text-xl"
-              >
-                <FaLinkedinIn></FaLinkedinIn>
-              </a>
-            </div>
-            <div className="">
-              <a href="https://x.com/WalidHasan17083" target="_blank" className="text-xl">
-                <FaXTwitter></FaXTwitter>
-              </a>
-            </div>
-            <div className="">
-              <a href="https://github.com/walid-official" target="_blank" className="text-xl">
-                {" "}
-                <RiGithubLine></RiGithubLine>
-              </a>
-            </div>
-          </div>
-        </div>
+import React from 'react';
+import { Link } from 'react-router-dom';
+import Logo from '../../assets/logo.png';
+import { FaFacebook, FaTwitter, FaLinkedin, FaGithub } from 'react-icons/fa';
 
-        <nav>
-          <h6 className="text-xl text-white font-bold pb-3">Services</h6>
-          <a href="https://www.brandingmag.com/2015/10/14/what-is-branding-and-why-is-it-important-for-your-business/" target="_blank" className="link link-hover block text-white">Branding</a>
-          <a href="https://www.design.com/" target="_blank" className="link link-hover block text-white">Design</a>
-          <a href="https://dictionary.cambridge.org/dictionary/norwegian-english/markering" target="_blank" className="link link-hover block text-white">Marketing</a>
-          <a href="https://dictionary.cambridge.org/dictionary/english/advertisement" target="_blank" className="link link-hover block text-white">Advertisement</a>
-        </nav>
-        <nav>
-          <h6 className="text-xl text-white font-bold pb-3">Company</h6>
-          <a href="https://bloggers.feedspot.com/coin_blogs/" target="_blank" className="link link-hover block text-white">About us</a>
-          <a href="https://bloggers.feedspot.com/coin_blogs/" target="_blank" className="link link-hover block text-white">Contact</a>
-          <a href="https://wordpress.org/plugins/contact-form-7/" target="_blank" className="link link-hover block text-white">Jobs</a>
-          <a   href="https://www.shopify.com/blog/44447941-how-to-create-a-press-kit-that-gets-publicity-for-your-business" target="_blank" className="link link-hover block text-white">Press kit</a>
-        </nav>
-        <nav>
-          <h6 className="text-xl text-white font-bold pb-3">Legal</h6>
-          <a  href="https://termly.io/resources/templates/terms-of-use-template/" target="_blank" className="link link-hover block text-white">Terms of use</a>
-          <a  href="https://policies.google.com/privacy?hl=en-US" target="_blank" className="link link-hover block text-white">Privacy policy</a>
-          <a  href="https://www.cookiebot.com/en/cookie-policy/" target="_blank" className="link link-hover block text-white">Cookie policy</a>
-        </nav>
-      </div>
-    </div>
-  );
+const Footer = () => {
+    return (
+        <footer className="bg-base-200 text-base-content py-10 border-t border-base-300">
+            <div className="w-11/12 mx-auto grid grid-cols-1 md:grid-cols-4 gap-8">
+                {/* Brand Overview */}
+                <div className="space-y-4">
+                    <div className="flex items-center gap-3">
+                        <img src={Logo} alt="SINEX Logo" className="w-10 h-10 rounded-full object-cover" />
+                        <span className="text-2xl font-bold tracking-wider">SINEX</span>
+                    </div>
+                    <p className="text-sm opacity-80">
+                        SirArleayous Innovation Nexus Ltd (SINEX) is a multi-country digital opportunity, task, research, and rewards ecosystem.
+                    </p>
+                </div>
+
+                {/* Quick Navigation */}
+                <div>
+                    <h3 className="font-bold text-lg mb-3">Quick Links</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><Link to="/" className="hover:text-[#00d7c0]">Home</Link></li>
+                        <li><Link to="/about" className="hover:text-[#00d7c0]">About SINEX</Link></li>
+                        <li><Link to="/contact" className="hover:text-[#00d7c0]">Contact Us</Link></li>
+                        <li><Link to="/dashboard" className="hover:text-[#00d7c0]">Dashboard</Link></li>
+                    </ul>
+                </div>
+
+                {/* Terminology / Role Links */}
+                <div>
+                    <h3 className="font-bold text-lg mb-3">Ecosystem</h3>
+                    <ul className="space-y-2 text-sm">
+                        <li><span className="opacity-80">For Users (Tasks & Rewards)</span></li>
+                        <li><span className="opacity-80">For Clients & Businesses</span></li>
+                        <li><span className="opacity-80">Multi-Country Operations</span></li>
+                        <li><span className="opacity-80">Developer API Hub</span></li>
+                    </ul>
+                </div>
+
+                {/* Social & Corporate Info */}
+                <div>
+                    <h3 className="font-bold text-lg mb-3">Connect With Us</h3>
+                    <div className="flex gap-4 mb-4 text-xl">
+                        <a href="https://facebook.com" target="_blank" rel="noreferrer" className="hover:text-[#00d7c0]"><FaFacebook /></a>
+                        <a href="https://twitter.com" target="_blank" rel="noreferrer" className="hover:text-[#00d7c0]"><FaTwitter /></a>
+                        <a href="https://linkedin.com" target="_blank" rel="noreferrer" className="hover:text-[#00d7c0]"><FaLinkedin /></a>
+                        <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-[#00d7c0]"><FaGithub /></a>
+                    </div>
+                    <p className="text-xs opacity-70">
+                        Powered by SirArleayous Innovation Nexus Ltd
+                    </p>
+                </div>
+            </div>
+
+            <div className="mt-8 pt-6 border-t border-base-300 text-center text-sm opacity-70">
+                <p>&copy; {new Date().getFullYear()} SINEX (SirArleayous Innovation Nexus Ltd). All rights reserved.</p>
+            </div>
+        </footer>
+    );
 };
 
 export default Footer;
