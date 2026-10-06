@@ -6,118 +6,106 @@ import { NavLink, useNavigate } from "react-router-dom";
 import { FaArrowRight, FaEye, FaEyeSlash } from "react-icons/fa";
 import axios from "axios";
 import CustomCursor from "../../components/CustomCursor/CustomCursor";
+import { getAuthErrorMessage } from "../../utils/authError";
 
-const Image_hosting_key = import.meta.env.VITE_IMAGE_HOSTING_KEY;
-const image_hosting_api = `https://api.imgbb.com/1/upload?key=${Image_hosting_key}`;
+const imageKey = import.meta.env.VITE_IMAGE_HOSTING_KEY;
+const imageApi = `https://api.imgbb.com/1/upload?key=${imageKey}`;
+const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://earn-money-server-5.onrender.com";
+const DEFAULT_PHOTO = "https://i.ibb.co/mR40Bmy/user.png";
+
+const inputCls =
+  "w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 focus:border-[#00d7c0] focus:outline-none";
+const labelCls = "block mb-1 text-sm font-semibold text-slate-200";
+const errCls = "text-red-400 text-xs mt-1";
+const primaryBtn =
+  "w-full rounded-lg bg-[#00d7c0] text-slate-950 font-bold py-2 hover:bg-[#00bfa8] disabled:opacity-60";
+
+// Render's free tier sleeps, so allow a long wake-up time.
+const saveUser = async (userData) => {
+  try {
+    await axios.post(`${backendUrl}/api/users`, userData, { timeout: 60000 });
+  } catch (err) {
+    console.warn("Backend user save failed:", err.message);
+    toast("Account created, but profile sync failed. Try logging in again shortly.", { icon: "⚠️" });
+  }
+};
 
 const Register = () => {
   const { createUser, updateUserProfile, signInWithGoogle } = useContext(AuthContext);
   const [showPassword, setShowPassword] = useState(false);
-  const [passwordStrength, setPasswordStrength] = useState({
-    label: "Strengthen Your Password",
-    color: "bg-red-500",
-    progress: 0,
-  });
+  const [strength, setStrength] = useState({ label: "Weak", color: "bg-red-500", progress: 0 });
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm();
 
-  const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://earn-money-server-5.onrender.com";
+  // Keep react-hook-form's own onChange and add ours on top.
+  const { onChange: rhfOnChange, ...passwordReg } = register("password", {
+    required: "Password is required",
+    pattern: {
+      value: /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
+      message: "At least 6 characters with uppercase & lowercase letters",
+    },
+  });
 
-  const evaluatePasswordStrength = (password) => {
-    if (!password) {
-      setPasswordStrength({ label: "Weak", color: "bg-red-500", progress: 0 });
-      return;
-    }
-
+  const evaluateStrength = (pw) => {
     let score = 0;
-    if (password.length >= 6) score++;
-    if (/[A-Z]/.test(password)) score++;
-    if (/[a-z]/.test(password)) score++;
-    if (/\d/.test(password)) score++;
-    if (/[!@#$%^&*]/.test(password)) score++;
-
-    if (score <= 2) {
-      setPasswordStrength({ label: "Weak", color: "bg-red-500", progress: 25 });
-    } else if (score === 3) {
-      setPasswordStrength({ label: "Medium", color: "bg-yellow-500", progress: 50 });
-    } else if (score >= 4) {
-      setPasswordStrength({ label: "Strong", color: "bg-green-500", progress: 100 });
-    }
+    if (pw.length >= 6) score++;
+    if (/[A-Z]/.test(pw)) score++;
+    if (/[a-z]/.test(pw)) score++;
+    if (/\d/.test(pw)) score++;
+    if (/[!@#$%^&*]/.test(pw)) score++;
+    if (!pw || score <= 2) setStrength({ label: "Weak", color: "bg-red-500", progress: pw ? 25 : 0 });
+    else if (score === 3) setStrength({ label: "Medium", color: "bg-yellow-500", progress: 50 });
+    else setStrength({ label: "Strong", color: "bg-green-500", progress: 100 });
   };
 
-  const onSubmit = async (data) => {
-    const { name, email, password, role } = data;
-    let coin = role === "User" ? 10 : 50;
-    let photoURL = "https://i.ibb.co/mR40Bmy/user.png";
+  const onSubmit = async ({ name, email, password, role, photo }) => {
+    const coin = role === "Worker" ? 10 : 50;
+    let photoURL = DEFAULT_PHOTO;
 
-    // 1. Safe Image Upload (Fallback on failure)
-    if (data.photo && data.photo[0] && Image_hosting_key) {
+    if (photo?.[0] && imageKey) {
       try {
         const formData = new FormData();
-        formData.append("image", data.photo[0]);
-        const imgResponse = await axios.post(image_hosting_api, formData);
-        if (imgResponse?.data?.data?.display_url) {
-          photoURL = imgResponse.data.data.display_url;
-        }
-      } catch (imgError) {
-        console.warn("Image hosting failed, using default avatar:", imgError);
+        formData.append("image", photo[0]);
+        const res = await axios.post(imageApi, formData);
+        photoURL = res?.data?.data?.display_url || DEFAULT_PHOTO;
+      } catch (err) {
+        console.warn("Image upload failed, using default avatar:", err);
       }
     }
 
-    // 2. Firebase Account Creation
     try {
-      const userCredential = await createUser(email, password);
+      await createUser(email, password);
       await updateUserProfile({ displayName: name, photoURL });
-
-      const userData = {
-        name,
-        photo: photoURL,
-        email,
-        role: role || "User",
-        coin,
-      };
-
-      // 3. Post to Backend Database with Timeout Catch
-      try {
-        await axios.post(`${backendUrl}/api/users`, userData, { timeout: 8000 });
-      } catch (backendErr) {
-        console.warn("Backend server request timed out or unfulfilled:", backendErr.message);
-      }
-
-      toast.success("Welcome to SINEX! Registration Successful.");
+      await saveUser({ name, photo: photoURL, email, role, coin });
+      toast.success("Welcome to SINEX! Registration successful.");
       reset();
       navigate("/dashboard");
     } catch (error) {
-      console.error("Firebase Registration Error: ", error);
-      toast.error(error?.message || "Registration failed. Check Firebase Auth settings.");
+      console.error("Registration error:", error);
+      toast.error(getAuthErrorMessage(error));
     }
   };
 
   const handleGoogleRegister = async () => {
     try {
-      const data = await signInWithGoogle();
-      const googleUserData = {
-        name: data?.user?.displayName,
-        email: data?.user?.email,
-        photo: data?.user?.photoURL,
-        role: "User",
+      const { user } = await signInWithGoogle();
+      await saveUser({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL || DEFAULT_PHOTO,
+        role: "Worker",
         coin: 10,
-      };
-      try {
-        await axios.post(`${backendUrl}/api/users`, googleUserData, { timeout: 8000 });
-      } catch (backendErr) {
-        console.warn("Backend server request timed out:", backendErr.message);
-      }
+      });
       toast.success("Registered successfully with Google!");
       navigate("/dashboard");
     } catch (error) {
-      console.error("Google Auth Error: ", error);
-      toast.error("Google registration failed");
+      console.error("Google auth error:", error);
+      toast.error(getAuthErrorMessage(error));
     }
   };
 
@@ -125,159 +113,91 @@ const Register = () => {
     <div className="bg-slate-950 min-h-screen py-12 px-4 flex items-center justify-center">
       <CustomCursor />
       <div className="w-full max-w-5xl mx-auto grid lg:grid-cols-2 gap-8 items-center bg-slate-900 rounded-2xl shadow-2xl p-6 lg:p-12 border border-slate-800">
-        
-        {/* Left Info Column */}
         <div className="space-y-6 text-white">
-          <h2 className="font-extrabold text-3xl lg:text-4xl leading-tight">
-            Register for SINEX Platform
-          </h2>
+          <h2 className="font-extrabold text-3xl lg:text-4xl leading-tight">Register for SINEX Platform</h2>
           <p className="text-slate-300 leading-relaxed text-sm lg:text-base">
-            Sign up now to unlock global digital task opportunities, build your reward balance, and launch verified multi-country campaigns.
+            Sign up now to unlock global digital task opportunities, build your reward balance, and launch
+            verified multi-country campaigns.
           </p>
           <div className="flex flex-wrap gap-4 pt-2">
-            <NavLink to="/login">
-              <button className="btn bg-[#00d7c0] text-slate-950 hover:bg-[#00bfa8] border-none font-bold px-6">
-                Go To Login
-              </button>
+            <NavLink to="/login" className="rounded-lg bg-[#00d7c0] text-slate-950 font-bold px-6 py-2 hover:bg-[#00bfa8]">
+              Go To Login
             </NavLink>
-            <NavLink to="/">
-              <button className="btn btn-outline border-slate-600 text-white hover:bg-slate-800 flex items-center gap-2">
-                Go To Home
-                <FaArrowRight />
-              </button>
+            <NavLink
+              to="/"
+              className="rounded-lg border border-slate-600 text-white px-4 py-2 flex items-center gap-2 hover:bg-slate-800"
+            >
+              Go To Home <FaArrowRight />
             </NavLink>
           </div>
         </div>
 
-        {/* Right Form */}
         <div className="bg-slate-900 border border-slate-800 rounded-xl p-6 shadow-xl text-slate-100">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-slate-200 font-semibold">Full Name</span>
-              </label>
-              <input
-                type="text"
-                {...register("name", { required: "Name is required" })}
-                placeholder="Enter full name"
-                className="input input-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none"
-              />
-              {errors.name && (
-                <p className="text-red-400 text-xs mt-1">{errors.name.message}</p>
-              )}
+            <div>
+              <label className={labelCls}>Full Name</label>
+              <input type="text" placeholder="Enter full name" className={inputCls}
+                {...register("name", { required: "Name is required" })} />
+              {errors.name && <p className={errCls}>{errors.name.message}</p>}
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-slate-200 font-semibold">Profile Photo</span>
-              </label>
-              <input
-                type="file"
-                {...register("photo", { required: "Photo is required" })}
-                className="file-input file-input-bordered bg-slate-800 border-slate-700 text-white w-full"
-              />
-              {errors.photo && (
-                <p className="text-red-400 text-xs mt-1">{errors.photo.message}</p>
-              )}
+            <div>
+              <label className={labelCls}>Profile Photo</label>
+              <input type="file" accept="image/*"
+                className={`${inputCls} file:mr-3 file:rounded file:border-0 file:bg-[#00d7c0] file:px-3 file:py-1 file:font-semibold file:text-slate-950`}
+                {...register("photo", { required: "Photo is required" })} />
+              {errors.photo && <p className={errCls}>{errors.photo.message}</p>}
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-slate-200 font-semibold">Email Address</span>
-              </label>
-              <input
-                type="email"
-                {...register("email", { required: "Email is required" })}
-                placeholder="Enter email"
-                className="input input-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none"
-              />
-              {errors.email && (
-                <p className="text-red-400 text-xs mt-1">{errors.email.message}</p>
-              )}
+            <div>
+              <label className={labelCls}>Email Address</label>
+              <input type="email" placeholder="Enter email" className={inputCls}
+                {...register("email", { required: "Email is required" })} />
+              {errors.email && <p className={errCls}>{errors.email.message}</p>}
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text text-slate-200 font-semibold">Select Account Role</span>
-              </label>
-              <select
-                {...register("role", { required: "Role selection is required" })}
-                className="select select-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none"
-                defaultValue=""
-              >
-                <option disabled value="">
-                  Choose Account Type
-                </option>
+            <div>
+              <label className={labelCls}>Select Account Role</label>
+              <select defaultValue="" className={inputCls}
+                {...register("role", { required: "Role selection is required" })}>
+                <option disabled value="">Choose Account Type</option>
                 <option value="Worker">User (Complete Tasks & Earn Rewards)</option>
                 <option value="Buyer">Client / Business (Create Campaigns)</option>
               </select>
-              {errors.role && (
-                <p className="text-red-400 text-xs mt-1">{errors.role.message}</p>
-              )}
+              {errors.role && <p className={errCls}>{errors.role.message}</p>}
             </div>
 
-            <div className="form-control relative">
-              <label className="label">
-                <span className="label-text text-slate-200 font-semibold">Password</span>
-              </label>
-              <div className="relative w-full">
-                <input
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: "Password is required",
-                    pattern: {
-                      value: /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
-                      message: "Password must be at least 6 characters with uppercase & lowercase letters",
-                    },
-                  })}
-                  placeholder="Enter password"
-                  className="input input-bordered w-full bg-slate-800 border-slate-700 text-white focus:border-[#00d7c0] focus:outline-none pr-10"
-                  onChange={(e) => evaluatePasswordStrength(e.target.value)}
-                />
-                <div
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer text-slate-400 hover:text-white z-10"
-                >
-                  {showPassword ? <FaEyeSlash className="text-lg" /> : <FaEye className="text-lg" />}
-                </div>
+            <div>
+              <label className={labelCls}>Password</label>
+              <div className="relative">
+                <input type={showPassword ? "text" : "password"} placeholder="Enter password"
+                  className={`${inputCls} pr-10`} {...passwordReg}
+                  onChange={(e) => { rhfOnChange(e); evaluateStrength(e.target.value); }} />
+                <button type="button" onClick={() => setShowPassword((s) => !s)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
-              {errors.password && (
-                <p className="text-red-400 text-xs mt-1">{errors.password.message}</p>
-              )}
-
+              {errors.password && <p className={errCls}>{errors.password.message}</p>}
               <div className="mt-3">
                 <div className="h-1.5 w-full bg-slate-800 rounded">
-                  <div
-                    className={`h-full ${passwordStrength.color} rounded transition-all duration-300`}
-                    style={{ width: `${passwordStrength.progress}%` }}
-                  ></div>
+                  <div className={`h-full ${strength.color} rounded transition-all duration-300`}
+                    style={{ width: `${strength.progress}%` }} />
                 </div>
-                <p className="text-xs mt-1 text-slate-400">{passwordStrength.label}</p>
+                <p className="text-xs mt-1 text-slate-400">{strength.label}</p>
               </div>
             </div>
 
             <div className="pt-2 space-y-3">
-              <button
-                type="submit"
-                className="btn w-full bg-[#00d7c0] text-slate-950 hover:bg-[#00bfa8] border-none font-bold"
-              >
-                Register Account
+              <button type="submit" disabled={isSubmitting} className={primaryBtn}>
+                {isSubmitting ? "Creating account..." : "Register Account"}
               </button>
-              <button
-                onClick={handleGoogleRegister}
-                type="button"
-                className="btn w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white flex items-center justify-center gap-2"
-              >
-                <img
-                  src="https://i.ibb.co/TvvzXfq/google.png"
-                  className="w-5 h-5 object-contain"
-                  alt="Google"
-                />
+              <button type="button" onClick={handleGoogleRegister}
+                className="w-full rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-white py-2 flex items-center justify-center gap-2">
+                <img src="https://i.ibb.co/TvvzXfq/google.png" className="w-5 h-5 object-contain" alt="Google" />
                 Continue With Google
               </button>
             </div>
-
           </form>
         </div>
       </div>

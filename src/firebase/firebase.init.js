@@ -1,19 +1,26 @@
+console.log("API KEY:", import.meta.env.VITE_FIREBASE_API_KEY);
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
+import { getAnalytics, isSupported } from "firebase/analytics";
+
+const env = import.meta.env;
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA6h9LLdboTnX6FEuCh_sEa4fBpZQmaM-Y",
-  authDomain: "earn-money-34177.firebaseapp.com",
-  projectId: "earn-money-34177",
-  storageBucket: "earn-money-34177.firebasestorage.app",
-  messagingSenderId: "101077322900",
-  appId: "1:101077322900:web:6be7fc3f123a015d55b881",
-  measurementId: "G-71N51R462B"
+  apiKey: env.VITE_FIREBASE_API_KEY,
+  authDomain: env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: env.VITE_FIREBASE_APP_ID,
+  measurementId: env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
+
+// Analytics only where supported (never blocks auth)
+isSupported().then((ok) => ok && getAnalytics(app)).catch(() => {});
 
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
