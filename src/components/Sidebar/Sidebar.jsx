@@ -2,17 +2,34 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import useRole from "../../Hooks/useRole";
 import {
-  FaHome,
-  FaTasks,
-  FaPlusCircle,
-  FaHistory,
-  FaUsers,
-  FaWallet,
-  FaCheckCircle,
-  FaClipboardList,
-  FaReceipt,
-  FaShieldAlt,
+  FaHome, FaTasks, FaWallet, FaUser, FaHeadset, FaPlusCircle,
+  FaClipboardList, FaCoins, FaUsers, FaMoneyCheckAlt, FaHistory,
 } from "react-icons/fa";
+
+// Bottom tab bar (replaces the old sidebar; the file name is kept so imports don't change)
+const TABS = {
+  worker: [
+    { to: "/dashboard", label: "Home", icon: FaHome, end: true },
+    { to: "/dashboard/taskLists", label: "Tasks", icon: FaTasks },
+    { to: "/dashboard/withdrawals", label: "Wallet", icon: FaWallet },
+    { to: "/dashboard/profile", label: "Profile", icon: FaUser },
+    { to: "/contact", label: "Contact", icon: FaHeadset },
+  ],
+  client: [
+    { to: "/dashboard", label: "Home", icon: FaHome, end: true },
+    { to: "/dashboard/addNewTasks", label: "Post Task", icon: FaPlusCircle },
+    { to: "/dashboard/myTasks", label: "My Tasks", icon: FaTasks },
+    { to: "/dashboard/tasksToReview", label: "Review", icon: FaClipboardList },
+    { to: "/dashboard/purchaseCoin", label: "Coins", icon: FaCoins },
+  ],
+  admin: [
+    { to: "/dashboard", label: "Home", icon: FaHome, end: true },
+    { to: "/dashboard/manageUsers", label: "Users", icon: FaUsers },
+    { to: "/dashboard/manageTasks", label: "Tasks", icon: FaTasks },
+    { to: "/dashboard/withdrawRequests", label: "Payouts", icon: FaMoneyCheckAlt },
+    { to: "/dashboard/activityLog", label: "Log", icon: FaHistory },
+  ],
+};
 
 const Sidebar = () => {
   const [role, isLoading] = useRole();
@@ -20,94 +37,34 @@ const Sidebar = () => {
   // Role comes from the backend (the admin email is set on the server), so no email hack here
   const isAdmin = role === "Admin";
   const isBuyer = role === "Buyer" || role === "Client";
-  const isWorker = !isAdmin && !isBuyer;
-
-  const linkClass = ({ isActive }) =>
-    `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
-      isActive
-        ? "bg-[#00d7c0] text-slate-950 font-bold shadow-lg shadow-[#00d7c0]/20"
-        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
-    }`;
+  const tabs = isAdmin ? TABS.admin : isBuyer ? TABS.client : TABS.worker;
 
   return (
-    <div className="space-y-2 py-4">
-      <NavLink to="/dashboard" end className={linkClass}>
-        <FaHome className="text-lg" />
-        <span>Dashboard</span>
-      </NavLink>
-
-      {isLoading && <p className="px-4 py-3 text-xs text-slate-500">Loading menu...</p>}
-
-      {/* WORKER LINKS */}
-      {!isLoading && isWorker && (
-        <>
-          <NavLink to="/dashboard/taskLists" className={linkClass}>
-            <FaTasks className="text-lg" />
-            <span>Task Directory</span>
-          </NavLink>
-          <NavLink to="/dashboard/mySubmission" className={linkClass}>
-            <FaHistory className="text-lg" />
-            <span>My Submissions</span>
-          </NavLink>
-          <NavLink to="/dashboard/approvedSubmissions" className={linkClass}>
-            <FaCheckCircle className="text-lg" />
-            <span>Approved Submissions</span>
-          </NavLink>
-          <NavLink to="/dashboard/withdrawals" className={linkClass}>
-            <FaWallet className="text-lg" />
-            <span>Withdrawals</span>
-          </NavLink>
-        </>
-      )}
-
-      {/* BUYER / CLIENT LINKS */}
-      {!isLoading && isBuyer && (
-        <>
-          <NavLink to="/dashboard/addNewTasks" className={linkClass}>
-            <FaPlusCircle className="text-lg" />
-            <span>Add New Task</span>
-          </NavLink>
-          <NavLink to="/dashboard/myTasks" className={linkClass}>
-            <FaTasks className="text-lg" />
-            <span>My Tasks</span>
-          </NavLink>
-          <NavLink to="/dashboard/tasksToReview" className={linkClass}>
-            <FaClipboardList className="text-lg" />
-            <span>Tasks To Review</span>
-          </NavLink>
-          <NavLink to="/dashboard/purchaseCoin" className={linkClass}>
-            <FaWallet className="text-lg" />
-            <span>Purchase Coins</span>
-          </NavLink>
-          <NavLink to="/dashboard/paymentHistory" className={linkClass}>
-            <FaReceipt className="text-lg" />
-            <span>Payment History</span>
-          </NavLink>
-        </>
-      )}
-
-      {/* ADMIN LINKS */}
-      {!isLoading && isAdmin && (
-        <>
-          <NavLink to="/dashboard/manageUsers" className={linkClass}>
-            <FaUsers className="text-lg" />
-            <span>Manage Users</span>
-          </NavLink>
-          <NavLink to="/dashboard/manageTasks" className={linkClass}>
-            <FaTasks className="text-lg" />
-            <span>Manage Tasks</span>
-          </NavLink>
-          <NavLink to="/dashboard/withdrawRequests" className={linkClass}>
-            <FaShieldAlt className="text-lg" />
-            <span>Withdrawal Requests</span>
-          </NavLink>
-          <NavLink to="/dashboard/activityLog" className={linkClass}>
-            <FaHistory className="text-lg" />
-            <span>Activity Log</span>
-          </NavLink>
-        </>
-      )}
-    </div>
+    <nav className="fixed bottom-0 left-1/2 -translate-x-1/2 w-full max-w-lg z-40 px-3 pb-[max(0.5rem,env(safe-area-inset-bottom))] pt-2 bg-gradient-to-t from-[#0B0F19] via-[#0B0F19]/95 to-transparent">
+      <div className="flex items-center justify-between bg-[#111827]/95 backdrop-blur-xl border border-slate-800 rounded-2xl p-1.5 shadow-2xl">
+        {isLoading ? (
+          <p className="w-full text-center text-xs text-slate-500 py-3">Loading menu...</p>
+        ) : (
+          tabs.map(({ to, label, icon: Icon, end }) => (
+            <NavLink
+              key={to}
+              to={to}
+              end={end}
+              className={({ isActive }) =>
+                `flex-1 flex flex-col items-center gap-1 py-2 rounded-xl text-[10px] font-semibold transition-all ${
+                  isActive
+                    ? "bg-[#00d7c0] text-slate-950 shadow-lg shadow-[#00d7c0]/20"
+                    : "text-slate-400 hover:text-white"
+                }`
+              }
+            >
+              <Icon className="text-lg" />
+              <span>{label}</span>
+            </NavLink>
+          ))
+        )}
+      </div>
+    </nav>
   );
 };
 

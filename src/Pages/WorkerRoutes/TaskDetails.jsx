@@ -45,79 +45,58 @@ const TaskDetails = () => {
   const closed = slotsLeft === 0 || task.completion_date < new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <Link
-        to="/dashboard/taskLists"
-        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-[#00d7c0] transition-colors"
-      >
-        <FaArrowLeft />
-        <span>Back to Task Directory</span>
+    <div className="space-y-4">
+      <Link to="/dashboard/taskLists" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-[#00d7c0]">
+        <FaArrowLeft /><span>Back to Tasks</span>
       </Link>
 
-      <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="bg-[#111827]/90 border border-slate-800 rounded-3xl p-5 space-y-4">
+        <div className="flex items-start justify-between gap-3">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-[#00d7c0] bg-[#00d7c0]/10 px-3 py-1 rounded-full border border-[#00d7c0]/20">
-              {closed ? "Closed Task" : "Active Task"}
+            <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full border ${closed ? "text-rose-400 bg-rose-500/10 border-rose-500/20" : "text-[#00d7c0] bg-[#00d7c0]/10 border-[#00d7c0]/20"}`}>
+              {closed ? "Closed" : "Active"}
             </span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-3">{task.task_title}</h2>
+            <h2 className="text-xl font-extrabold text-white mt-3 leading-snug">{task.task_title}</h2>
           </div>
-          <div className="text-left md:text-right">
-            <span className="text-3xl font-extrabold text-[#00d7c0]">{task.payable_amount} Coins</span>
-            <span className="block text-xs text-slate-400 mt-1">Reward per approved submission</span>
+          <div className="text-right shrink-0">
+            <span className="text-2xl font-extrabold text-[#00d7c0]">{task.payable_amount}</span>
+            <span className="block text-[10px] text-slate-400">coins / approval</span>
           </div>
         </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-xs text-slate-300">
-          <div>
-            <span className="text-slate-500 block">Created By:</span>
-            <strong className="text-slate-200">{task.buyer_name}</strong>
-          </div>
-          <div>
-            <span className="text-slate-500 block">Required Workers:</span>
-            <strong className="text-slate-200">{slotsLeft} of {task.required_workers} slots open</strong>
-          </div>
-          <div>
-            <span className="text-slate-500 block">Deadline:</span>
-            <strong className="text-slate-200">{task.completion_date}</strong>
-          </div>
+        <div className="grid grid-cols-3 gap-2 pt-3 border-t border-slate-800 text-[11px]">
+          <div><span className="text-slate-500 block">Created by</span><strong className="text-slate-200">{task.buyer_name}</strong></div>
+          <div><span className="text-slate-500 block">Slots</span><strong className="text-slate-200">{slotsLeft}/{task.required_workers} open</strong></div>
+          <div><span className="text-slate-500 block">Deadline</span><strong className="text-slate-200">{task.completion_date}</strong></div>
         </div>
       </div>
 
-      <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-4">
-        <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Task Instructions & Requirements</h3>
-        {task.task_image && <img src={task.task_image} alt="" className="rounded-xl max-h-72 object-cover" />}
+      <div className="bg-[#111827]/90 border border-slate-800 rounded-3xl p-5 space-y-3">
+        <h3 className="text-base font-bold text-white">Instructions</h3>
+        {task.task_image && <img src={task.task_image} alt="" className="rounded-2xl max-h-60 w-full object-cover" />}
         <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">{task.task_detail}</p>
-        <div className="p-4 bg-[#0B0F19] border border-slate-800 rounded-xl text-xs text-slate-400">
+        <div className="p-3 bg-[#0B0F19] border border-slate-800 rounded-xl text-xs text-slate-400">
           <strong className="text-[#00d7c0] block mb-1">Required Proof:</strong>
           {task.submission_info}
         </div>
       </div>
 
       {closed ? (
-        <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+        <div className="bg-[#111827]/90 border border-slate-800 rounded-3xl p-6 text-center text-slate-400 text-sm">
           This task is closed (no slots left or the deadline has passed).
         </div>
       ) : (
-        <form onSubmit={handleSubmit} className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
-          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Submit Task Evidence</h3>
-          <div className="space-y-2">
-            <label className="text-sm font-semibold text-slate-300 block">Evidence Details / Proof Link</label>
-            <textarea
-              rows="5"
-              placeholder="Paste your proof URL or detail explanation here..."
-              value={submissionDetail}
-              onChange={(e) => setSubmissionDetail(e.target.value)}
-              required
-              className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-xl p-4 text-slate-100 placeholder-slate-600 outline-none transition-all text-sm resize-none"
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            disabled={busy}
-            className="w-full bg-[#00d7c0] hover:bg-[#00b8a4] text-slate-950 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-[#00d7c0]/20 active:scale-[0.99] disabled:opacity-50"
-          >
+        <form onSubmit={handleSubmit} className="bg-[#111827]/90 border border-slate-800 rounded-3xl p-5 space-y-4">
+          <h3 className="text-base font-bold text-white">Submit Evidence</h3>
+          <textarea
+            rows="5"
+            placeholder="Paste your proof URL or detail explanation here..."
+            value={submissionDetail}
+            onChange={(e) => setSubmissionDetail(e.target.value)}
+            required
+            className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-2xl p-4 text-slate-100 placeholder-slate-600 outline-none text-sm resize-none"
+          ></textarea>
+          <button type="submit" disabled={busy}
+            className="w-full bg-[#00d7c0] hover:bg-[#00b8a4] text-slate-950 font-bold py-3.5 rounded-xl shadow-lg shadow-[#00d7c0]/20 active:scale-[0.99] disabled:opacity-50">
             {busy ? "Submitting..." : "Submit Evidence"}
           </button>
         </form>

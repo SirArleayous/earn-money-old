@@ -28,44 +28,23 @@ const MySubmissions = () => {
   const allSubmissions = serverSubmissions.map(toRow);
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
-      <div className="text-center space-y-2">
-        <h2 className="text-3xl font-extrabold text-white">
-          My Task <span className="text-[#00d7c0]">Submissions</span>
-        </h2>
-        <p className="text-slate-400 text-sm max-w-lg mx-auto">
-          Track the review status of your task evidence submissions in real time across active SINEX campaigns.
-        </p>
+    <div className="space-y-4">
+      <div>
+        <h2 className="text-2xl font-extrabold text-white">My <span className="text-[#00d7c0]">Submissions</span></h2>
+        <p className="text-slate-400 text-xs mt-1">Track the review status of your evidence in real time.</p>
       </div>
 
-      <div className="overflow-x-auto bg-[#111827]/90 border border-slate-800 rounded-2xl shadow-2xl p-4">
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-[#0B0F19] border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
-              <th className="p-4">Task Title</th>
-              <th className="p-4">Submission Detail</th>
-              <th className="p-4">Date</th>
-              <th className="p-4">Reward</th>
-              <th className="p-4">Status</th>
-              <th className="p-4">Client Name</th>
-              <th className="p-4">Client Email</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-800/60 text-sm text-slate-300">
-            {allSubmissions.length === 0 ? (
-              <tr>
-                <td colSpan="7" className="text-center py-8 text-slate-500">
-                  No submissions found. Complete a task from the Task Directory to view progress!
-                </td>
-              </tr>
-            ) : (
-              allSubmissions.map((mySubmit) => (
-                <MySubmissionTable key={mySubmit._id} mySubmit={mySubmit} />
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      {allSubmissions.length === 0 ? (
+        <p className="text-center text-slate-500 py-12 text-sm">
+          No submissions found. Complete a task from the Tasks tab to view progress!
+        </p>
+      ) : (
+        <div className="space-y-3">
+          {allSubmissions.map((mySubmit) => (
+            <MySubmissionTable key={mySubmit._id} mySubmit={mySubmit} />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

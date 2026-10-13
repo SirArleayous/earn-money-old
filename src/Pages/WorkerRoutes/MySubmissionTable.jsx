@@ -1,5 +1,6 @@
 import React from "react";
 
+// Now renders one rounded card per submission (file name kept so imports don't change)
 const MySubmissionTable = ({ mySubmit }) => {
   const {
     task_title,
@@ -24,40 +25,30 @@ const MySubmissionTable = ({ mySubmit }) => {
     }
   }
 
-  const getStatusBadge = () => {
-    if (status === "Approved") {
-      return (
-        <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
-          Approved
-        </span>
-      );
-    }
-    if (status === "Rejected") {
-      return (
-        <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-rose-500/10 text-rose-400 border border-rose-500/30">
-          Rejected
-        </span>
-      );
-    }
-    return (
-      <span className="px-2.5 py-1 text-xs font-bold rounded-full bg-amber-500/10 text-amber-400 border border-amber-500/30">
-        Pending
-      </span>
-    );
-  };
+  const chip =
+    status === "Approved"
+      ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
+      : status === "Rejected"
+      ? "bg-rose-500/10 text-rose-400 border-rose-500/30"
+      : "bg-amber-500/10 text-amber-400 border-amber-500/30";
 
   return (
-    <tr className="hover:bg-slate-800/40 transition-colors border-b border-slate-800/60">
-      <td className="p-4 font-semibold text-white">{task_title || "Untitled Task"}</td>
-      <td className="p-4 max-w-xs truncate text-slate-400">
-        {submission_detail ? String(submission_detail).slice(0, 30) + "..." : "N/A"}
-      </td>
-      <td className="p-4 text-xs text-slate-400">{dateMDY}</td>
-      <td className="p-4 font-bold text-[#00d7c0]">{payable_amount || 0} Coins</td>
-      <td className="p-4">{getStatusBadge()}</td>
-      <td className="p-4 font-semibold text-slate-200">{clientName}</td>
-      <td className="p-4 text-xs text-slate-500">{clientEmail}</td>
-    </tr>
+    <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-4 space-y-2">
+      <div className="flex items-start justify-between gap-3">
+        <h3 className="font-semibold text-white text-sm leading-snug">{task_title || "Untitled Task"}</h3>
+        <span className={`px-2.5 py-0.5 text-[11px] font-bold rounded-full border shrink-0 ${chip}`}>{status}</span>
+      </div>
+      <p className="text-xs text-slate-400 break-words">
+        {submission_detail ? String(submission_detail).slice(0, 60) + "..." : "N/A"}
+      </p>
+      <div className="flex items-center justify-between pt-2 border-t border-slate-800/80 text-xs">
+        <span className="font-bold text-[#00d7c0]">{payable_amount || 0} Coins</span>
+        <span className="text-slate-500">{dateMDY}</span>
+      </div>
+      <p className="text-[11px] text-slate-500">
+        <span className="text-slate-300 font-semibold">{clientName}</span> · {clientEmail}
+      </p>
+    </div>
   );
 };
 
