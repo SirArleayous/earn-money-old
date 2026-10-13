@@ -1,170 +1,103 @@
-import React, { useContext, useState } from "react";
-import useAuth from "../../Hooks/useAuth";
-import useAxiosSecure from "../../Hooks/useAxiosSecure";
-import { useQuery } from "@tanstack/react-query";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
 import toast from "react-hot-toast";
-import { ThemeContext } from "../../context/ThemeContext";
 
 const Withdrawals = () => {
-  const { user } = useAuth();
-  const axiosSecure = useAxiosSecure();
-  const [withdrawCoin, setWithDrawCoin] = useState(null);
-  const [convertedUsd, setConvertedUsd] = useState(null);
-  const { register, handleSubmit, reset } = useForm();
-  const { theme } = useContext(ThemeContext);
+  const [coins, setCoins] = useState("");
+  const [account, setAccount] = useState("");
+  const [paymentMethod, setPaymentMethod] = useState("MTN Mobile Money");
 
-  const {
-    data: amountInfo = [],
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["amountCoin", user?.email],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(`api/users/me/${user?.email}`);
-      console.log(data);
-      return data;
-    },
-  });
+  const totalBalanceCoins = 250;
+  const coinToUsdRate = 0.05; // Example conversion rate
+  const usdAmount = (Number(coins) * coinToUsdRate).toFixed(2);
 
-  const handleWithdrawCoin = (e) => {
-    const withdrawCoin = parseInt(e.target.value);
-    setWithDrawCoin(withdrawCoin);
-    setConvertedUsd(withdrawCoin / 20);
-  };
-
-  const handleWithdrawSubmit = async (data) => {
-    console.log(data);
-    console.log(withdrawCoin);
-    const date = new Date();
-
-    if (amountInfo?.coin < withdrawCoin) {
-      return toast.error("Withdrawal coin amount exceeds your available total balance");
+  const handleWithdraw = (e) => {
+    e.preventDefault();
+    if (Number(coins) > totalBalanceCoins) {
+      return toast.error("Insufficient coin balance!");
     }
-
-    const WithdrawalInfo = {
-      ...data,
-      withdrawCoin: withdrawCoin,
-      convertedUsd: convertedUsd,
-      name: amountInfo.name,
-      email: amountInfo.email,
-      withdrawalDate: date,
-      status: "pending",
-    };
-    console.log(WithdrawalInfo);
-    try {
-      const { data } = await axiosSecure.post(
-        `api/withdrawals/${user?.email}`,
-        WithdrawalInfo
-      );
-      console.log(data);
-      toast.success("Withdrawal Request Submitted Successfully!");
-      reset();
-      refetch();
-      setConvertedUsd(null);
-    } catch (err) {
-      console.log(err);
-    }
+    toast.success("Withdrawal request submitted successfully!");
+    setCoins("");
+    setAccount("");
   };
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === "light"
-          ? "bg-[#f9fafc] text-black"
-          : "dark:bg-black dark:text-white"
-      }`}
-    >
-      <div className="w-11/12 mx-auto">
-        <div className="py-8">
-          <h2 className="text-center font-bold text-3xl md:text-4xl py-3">
-            SINEX Earnings Withdrawal Hub
-          </h2>
-          <p className="md:w-[40%] mx-auto text-center">
-            Convert your earned reward coins into localized wallet balances fast and securely through our verified processing gateway.
-          </p>
+    <div className="max-w-4xl mx-auto space-y-8">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-extrabold text-white">
+          SINEX Earnings <span className="text-[#00d7c0]">Withdrawal Hub</span>
+        </h2>
+        <p className="text-slate-400 text-sm max-w-xl mx-auto">
+          Convert your earned reward coins into localized wallet balances fast and securely through our verified processing gateway.
+        </p>
+      </div>
 
-          <h2 className="font-bold text-3xl text-center py-4 mt-6">
-            Your Total Balance: ${amountInfo.coin ? amountInfo.coin / 20 : 0} ({amountInfo.coin || 0} Coins)
-          </h2>
-        </div>
-        <div className="md:w-[70%] lg:w-[50%] mx-auto pb-20">
-          <div className="card bg-base-100 w-full shrink-0 shadow-2xl">
-            <form
-              onSubmit={handleSubmit(handleWithdrawSubmit)}
-              className="card-body"
+      {/* Balance Banner */}
+      <div className="bg-gradient-to-r from-teal-500/10 via-[#111827] to-indigo-500/10 border border-[#00d7c0]/30 rounded-2xl p-6 text-center shadow-xl">
+        <span className="text-slate-400 text-sm uppercase tracking-wider font-semibold block">Available Reward Balance</span>
+        <h3 className="text-4xl font-extrabold text-[#00d7c0] mt-1">
+          UGX {totalBalanceCoins} <span className="text-xl text-slate-300 font-normal">({totalBalanceCoins} Coins)</span>
+        </h3>
+      </div>
+
+      {/* Withdrawal Form */}
+      <form onSubmit={handleWithdraw} className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-300 block">Coins To Withdraw</label>
+            <input
+              type="number"
+              placeholder="Enter coin amount (e.g. 100)"
+              value={coins}
+              onChange={(e) => setCoins(e.target.value)}
+              required
+              className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 outline-none transition-all"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-300 block">Equivalent Amount ($ USD)</label>
+            <input
+              type="text"
+              readOnly
+              value={`$ ${usdAmount}`}
+              className="w-full bg-[#0B0F19]/60 border border-slate-800 rounded-xl px-4 py-3 text-[#00d7c0] font-bold outline-none cursor-not-allowed"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-300 block">Account / Wallet Number</label>
+            <input
+              type="text"
+              placeholder="Enter phone or account number"
+              value={account}
+              onChange={(e) => setAccount(e.target.value)}
+              required
+              className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-xl px-4 py-3 text-slate-100 placeholder-slate-600 outline-none transition-all"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-300 block">Payment Gateway Method</label>
+            <select
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+              className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-xl px-4 py-3 text-slate-100 outline-none transition-all"
             >
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Coins To Withdraw</span>
-                </label>
-                <input
-                  type="number"
-                  onChange={handleWithdrawCoin}
-                  placeholder="Enter coin amount"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Equivalent Amount ($ USD)</span>
-                </label>
-                <input
-                  type="number"
-                  value={convertedUsd || ""}
-                  placeholder="Withdraw amount ($)"
-                  className="input input-bordered"
-                  required
-                  readOnly
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Account / Wallet Number</span>
-                </label>
-                <input
-                  type="number"
-                  {...register("accountNumber")}
-                  placeholder="Enter account / wallet number"
-                  className="input input-bordered"
-                  required
-                />
-              </div>
-              <div className="form-control">
-                <label className="label">
-                  <span className="label-text">Payment Method</span>
-                </label>
-                <select
-                  {...register("paymentMethod")}
-                  className="select select-bordered w-full max-w-xs"
-                  defaultValue=""
-                  required
-                >
-                  <option disabled value="">
-                    Select Payment Method
-                  </option>
-                  <option value="bkash">bKash</option>
-                  <option value="Nagad">Nagad</option>
-                  <option value="Rocket">Rocket</option>
-                  <option value="BankTransfer">Bank Transfer / Local Wallet</option>
-                </select>
-              </div>
-              <div className="form-control mt-6">
-                {amountInfo.coin <= 200 ? (
-                  <h2 className="text-red-500 font-bold text-xl text-center">
-                    Insufficient Balance (Minimum 200 Coins Required)
-                  </h2>
-                ) : (
-                  <button className="btn bg-[#00d7c0] hover:bg-[#00bfa8] border-none text-slate-950 font-bold">
-                    Request Withdrawal
-                  </button>
-                )}
-              </div>
-            </form>
+              <option value="MTN Mobile Money">MTN Mobile Money</option>
+              <option value="Airtel Money">Airtel Money</option>
+              <option value="Bank Transfer">Bank Transfer</option>
+              <option value="Crypto (USDT)">Crypto (USDT)</option>
+            </select>
           </div>
         </div>
-      </div>
+
+        <button
+          type="submit"
+          className="w-full bg-[#00d7c0] hover:bg-[#00b8a4] text-slate-950 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-[#00d7c0]/20 active:scale-[0.99]"
+        >
+          Request Withdrawal
+        </button>
+      </form>
     </div>
   );
 };

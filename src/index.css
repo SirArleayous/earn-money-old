@@ -1,9 +1,89 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body,html{
-    font-family: "Space Grotesk", serif;
+@layer base {
+  html, body {
+    font-family: "Space Grotesk", sans-serif;
     overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-[#020710] dark:text-slate-100;
+  }
+}
+
+/* Custom Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 9999px;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00d7c0;
+}
+
+/* Reusable UI Utility Classes for Dashboard & Landing Page */
+@layer components {
+  /* Modern Card Glass Effect */
+  .sinex-card {
+    @apply bg-white/80 dark:bg-[#0d131f]/80 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 rounded-2xl p-6 shadow-xl transition-all duration-300 hover:shadow-2xl hover:border-slate-300 dark:hover:border-slate-700;
+  }
+
+  /* Stat Card Gradients */
+  .sinex-stat-primary {
+    @apply bg-gradient-to-br from-[#00d7c0] to-teal-600 text-slate-950 rounded-2xl p-6 shadow-lg shadow-teal-500/20 transition-all duration-300 hover:scale-[1.02];
+  }
+
+  .sinex-stat-purple {
+    @apply bg-gradient-to-br from-violet-600 to-indigo-700 text-white rounded-2xl p-6 shadow-lg shadow-indigo-500/20 transition-all duration-300 hover:scale-[1.02];
+  }
+
+  .sinex-stat-accent {
+    @apply bg-gradient-to-br from-cyan-500 to-blue-600 text-white rounded-2xl p-6 shadow-lg shadow-blue-500/20 transition-all duration-300 hover:scale-[1.02];
+  }
+
+  /* Polished Table Styling */
+  .sinex-table-container {
+    @apply w-full overflow-x-auto rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0d131f] shadow-lg;
+  }
+
+  .sinex-table {
+    @apply w-full text-left border-collapse;
+  }
+
+  .sinex-table th {
+    @apply bg-slate-100/80 dark:bg-slate-900/80 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400 p-4 border-b border-slate-200 dark:border-slate-800;
+  }
+
+  .sinex-table td {
+    @apply p-4 text-sm border-b border-slate-100 dark:border-slate-800/60 text-slate-700 dark:text-slate-300;
+  }
+
+  /* Styled Buttons */
+  .sinex-btn-primary {
+    @apply bg-[#00d7c0] hover:bg-[#00b8a4] text-slate-950 font-bold px-5 py-2.5 rounded-xl shadow-md transition-all duration-200 hover:shadow-lg active:scale-95;
+  }
+
+  .sinex-btn-outline {
+    @apply border-2 border-[#00d7c0] text-[#00d7c0] hover:bg-[#00d7c0] hover:text-slate-950 font-bold px-5 py-2.5 rounded-xl transition-all duration-200 active:scale-95;
+  }
 }

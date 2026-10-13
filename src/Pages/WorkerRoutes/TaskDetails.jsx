@@ -1,244 +1,127 @@
-import { useQuery } from "@tanstack/react-query";
-import React, { useContext, useState } from "react";
-import { useParams } from "react-router-dom";
-import useAxiosSecure from "../../Hooks/useAxiosSecure";
-import useAuth from "../../Hooks/useAuth";
+import React, { useState } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import toast from "react-hot-toast";
-import { ThemeContext } from "../../context/ThemeContext";
+import { FaArrowLeft } from "react-icons/fa";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
 
 const TaskDetails = () => {
-  const { user } = useAuth();
-  const { theme } = useContext(ThemeContext);
-  const axiosSecure = useAxiosSecure();
   const { id } = useParams();
-  const {
-    data: taskDetail = [],
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["taskDetail"],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(`api/tasks/${id}`);
-      console.log(data);
-      return data;
-    },
+  const axiosSecure = useAxiosSecure();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const [submissionDetail, setSubmissionDetail] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  // The real task from the server (the old page showed a fake task whatever you clicked)
+  const { data: task, isLoading, isError } = useQuery({
+    queryKey: ["task", id],
+    queryFn: async () => (await axiosSecure.get(`/api/tasks/${id}`)).data,
+    refetchInterval: 15000,
   });
 
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-ring loading-lg"></span>
-      </div>
-    );
-
-  console.log(taskDetail);
-  const {
-    title,
-    _id,
-    detail,
-    payment,
-    worker,
-    totalPayment,
-    PaymentCoin,
-    completionDate,
-    submissionImage,
-    taskImage,
-    buyerInfo,
-  } = taskDetail || {};
-
-  console.log(PaymentCoin);
-
-  const handleTaskSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const form = e.target;
-    const submissionDetail = form.submission_detail.value;
-    const currentDate = new Date();
-
-    const taskSubmitInfo = {
-      task_id: taskDetail._id,
-      task_title: taskDetail.title,
-      payable_amount: taskDetail.payment,
-      submission_detail: submissionDetail,
-      PaymentCoin: taskDetail.PaymentCoin,
-      worker_detail: {
-        name: user?.displayName,
-        email: user?.email,
-      },
-      buyer_detail: {
-        name: taskDetail.buyerInfo.name,
-        email: taskDetail.buyerInfo.email,
-      },
-      current_date: currentDate,
-      status: "pending",
-    };
-    console.log(taskSubmitInfo);
-
-    if (worker > 0) {
-      try {
-        const { data } = await axiosSecure.post(
-          `api/worker/submit/${user?.email}`,
-          taskSubmitInfo
-        );
-
-        refetch();
-        console.log(data);
-        toast.success("Submission is Successful!!!");
-
-        let message = `${user?.displayName} has submitted work for ${title}`;
-        const route = "/dashboard";
-        const notificationObj = {
-          message,
-          email: taskDetail.buyerInfo.email,
-          actionRoute: route,
-          time: currentDate,
-        };
-
-        try {
-          const { data } = await axiosSecure.post(
-            "/notifications",
-            notificationObj
-          );
-          console.log(data);
-          toast.success("Successfully sent notification to campaign client");
-        } catch (err) {
-          console.log(err);
-        }
-      } catch (err) {
-        console.log(err);
-        toast.error("Something Went Wrong...", err.message);
-      }
+    if (!submissionDetail.trim()) return toast.error("Please provide submission evidence.");
+    setBusy(true);
+    try {
+      // the server fills in the task, buyer and worker details itself
+      await axiosSecure.post("/api/submissions", { task_id: id, submission_detail: submissionDetail });
+      toast.success("Task submission recorded successfully!");
+      setSubmissionDetail("");
+      ["my-submissions", "open-tasks", "task"].forEach((k) => queryClient.invalidateQueries({ queryKey: [k] }));
+      navigate("/dashboard/mySubmission");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Submission failed");
+    } finally {
+      setBusy(false);
     }
   };
 
-  let date = new Date(completionDate);
+  if (isLoading) return <div className="flex justify-center py-20"><span className="loading loading-ring loading-lg"></span></div>;
+  if (isError || !task) return <p className="text-center text-rose-400 py-20">Task not found. It may have been removed.</p>;
 
-  let monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-
-  let dateFormatted = `${
-    monthNames[date.getMonth()]
-  } ${date.getDate()}, ${date.getFullYear()}`;
-
-  console.log(dateFormatted);
+  const slotsLeft = Math.max(0, task.required_workers - task.filled);
+  const closed = slotsLeft === 0 || task.completion_date < new Date().toISOString().slice(0, 10);
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === "light"
-          ? "bg-[#f9fafc] text-black"
-          : "dark:bg-black dark:text-white"
-      }`}
-    >
-      <div className="w-[90%] mx-auto">
-        <div className="py-8">
-          <h2 className="font-bold text-center text-3xl">
-            SINEX Task Details & Submission Guide
-          </h2>
-          <p className="py-3 text-center md:w-[60%] mx-auto">
-            Review the campaign instructions carefully before executing your task. Submit required proof details to receive your verified reward balance.
-          </p>
-        </div>
-        <div className="lg:flex gap-4">
-          <div className="card mb-10 shadow-xl duration-500 lg:w-[60%]">
-            <figure>
-              <img
-                className="w-full h-[350px] object-cover"
-                src={taskImage}
-                alt="Task"
-              />
-            </figure>
-            <div className="card-body">
-              <div className="">
-                <h2 className="font-bold text-xl">{title}</h2>
-                <p className="py-2">{detail}</p>
-                <p className="py-2">
-                  <span className="font-bold text-xl mr-2">
-                    Completion-Date:
-                  </span>
-                  {dateFormatted}
-                </p>
-                <p className="py-2">
-                  <span className="font-bold text-xl">
-                    Required-Workers:
-                  </span>
-                  <span className="btn ml-2">{worker}</span>
-                </p>
-                <p className="py-2 border-b pb-6">
-                  <span className="font-bold text-xl">Payment:</span>
-                  <span className="btn ml-2">{payment}.00$</span>
-                </p>
-              </div>
+    <div className="max-w-4xl mx-auto space-y-8">
+      <Link
+        to="/dashboard/taskLists"
+        className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-[#00d7c0] transition-colors"
+      >
+        <FaArrowLeft />
+        <span>Back to Task Directory</span>
+      </Link>
 
-              <div className="flex justify-between">
-                <div className="">
-                  <h2 className="font-bold my-2">{buyerInfo?.name}</h2>
-                  <div className="">
-                    <img
-                      className="w-14 h-14 rounded-full"
-                      src={buyerInfo?.photo}
-                      alt="Client"
-                    />
-                  </div>
-                </div>
-                <div className="">
-                  <h2 className="font-bold my-2">Total-Payment</h2>
-                  <div className="">
-                    <p className="py-2">
-                      <span className="btn">{totalPayment}.00$</span>
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+      <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-4">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-[#00d7c0] bg-[#00d7c0]/10 px-3 py-1 rounded-full border border-[#00d7c0]/20">
+              {closed ? "Closed Task" : "Active Task"}
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-white mt-3">{task.task_title}</h2>
           </div>
-          <div className="lg:w-[40%] mb-10 shadow-xl">
-            <div className="">
-              <img className="" src={submissionImage} alt="Sample" />
-            </div>
+          <div className="text-left md:text-right">
+            <span className="text-3xl font-extrabold text-[#00d7c0]">{task.payable_amount} Coins</span>
+            <span className="block text-xs text-slate-400 mt-1">Reward per approved submission</span>
+          </div>
+        </div>
 
-            <div className="p-5">
-              <div className="">
-                <h2 className="font-bold text-xl">
-                  Tailored Professional Execution
-                </h2>
-                <p className="py-2">
-                  Tasks are structured to maintain quality and operational efficiency across the SINEX platform ecosystem.
-                </p>
-                <p className="py-2">
-                  Ensure all requested evidence, URLs, or notes are submitted accurately below for fast client verification.
-                </p>
-              </div>
-              <div className="py-5">
-                <form onSubmit={handleTaskSubmit}>
-                  <textarea
-                    placeholder="Enter submission proof details..."
-                    name="submission_detail"
-                    className="textarea textarea-bordered textarea-lg w-full max-w-lg"
-                    required
-                  ></textarea>
-                  <div className="mt-2">
-                    <button className="btn bg-[#00d7c0] hover:bg-[#00bfa8] border-none text-white font-bold">
-                      Submit Task Evidence
-                    </button>
-                  </div>
-                </form>
-              </div>
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-4 border-t border-slate-800 text-xs text-slate-300">
+          <div>
+            <span className="text-slate-500 block">Created By:</span>
+            <strong className="text-slate-200">{task.buyer_name}</strong>
+          </div>
+          <div>
+            <span className="text-slate-500 block">Required Workers:</span>
+            <strong className="text-slate-200">{slotsLeft} of {task.required_workers} slots open</strong>
+          </div>
+          <div>
+            <span className="text-slate-500 block">Deadline:</span>
+            <strong className="text-slate-200">{task.completion_date}</strong>
           </div>
         </div>
       </div>
+
+      <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-4">
+        <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Task Instructions & Requirements</h3>
+        {task.task_image && <img src={task.task_image} alt="" className="rounded-xl max-h-72 object-cover" />}
+        <p className="text-slate-300 text-sm leading-relaxed whitespace-pre-line">{task.task_detail}</p>
+        <div className="p-4 bg-[#0B0F19] border border-slate-800 rounded-xl text-xs text-slate-400">
+          <strong className="text-[#00d7c0] block mb-1">Required Proof:</strong>
+          {task.submission_info}
+        </div>
+      </div>
+
+      {closed ? (
+        <div className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 text-center text-slate-400">
+          This task is closed (no slots left or the deadline has passed).
+        </div>
+      ) : (
+        <form onSubmit={handleSubmit} className="bg-[#111827]/90 border border-slate-800 rounded-2xl p-8 shadow-2xl space-y-6">
+          <h3 className="text-lg font-bold text-white border-b border-slate-800 pb-3">Submit Task Evidence</h3>
+          <div className="space-y-2">
+            <label className="text-sm font-semibold text-slate-300 block">Evidence Details / Proof Link</label>
+            <textarea
+              rows="5"
+              placeholder="Paste your proof URL or detail explanation here..."
+              value={submissionDetail}
+              onChange={(e) => setSubmissionDetail(e.target.value)}
+              required
+              className="w-full bg-[#0B0F19] border border-slate-800 focus:border-[#00d7c0] rounded-xl p-4 text-slate-100 placeholder-slate-600 outline-none transition-all text-sm resize-none"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            disabled={busy}
+            className="w-full bg-[#00d7c0] hover:bg-[#00b8a4] text-slate-950 font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-[#00d7c0]/20 active:scale-[0.99] disabled:opacity-50"
+          >
+            {busy ? "Submitting..." : "Submit Evidence"}
+          </button>
+        </form>
+      )}
     </div>
   );
 };

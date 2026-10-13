@@ -1,62 +1,112 @@
 import React from "react";
-import { IoHome } from "react-icons/io5";
-import { NavLink, useNavigate } from "react-router-dom";
-import WorkerMenu from "../Menu/WorkerMenu";
-import BuyerMenu from "../Menu/BuyerMenu";
-import AdminMenu from "../Menu/AdminMenu";
+import { NavLink } from "react-router-dom";
 import useRole from "../../Hooks/useRole";
-import { CiLogin } from "react-icons/ci";
-import useAuth from "../../Hooks/useAuth";
+import {
+  FaHome,
+  FaTasks,
+  FaPlusCircle,
+  FaHistory,
+  FaUsers,
+  FaWallet,
+  FaCheckCircle,
+  FaClipboardList,
+  FaReceipt,
+  FaShieldAlt,
+} from "react-icons/fa";
+
 const Sidebar = () => {
   const [role, isLoading] = useRole();
-  const {userSignOut} = useAuth();
-  const handleSidebarLogout = async () => {
-    await userSignOut()
-  }
 
-  console.log(role);
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-ring loading-lg"></span>
-      </div>
-    );
-  }
+  // Role comes from the backend (the admin email is set on the server), so no email hack here
+  const isAdmin = role === "Admin";
+  const isBuyer = role === "Buyer" || role === "Client";
+  const isWorker = !isAdmin && !isBuyer;
+
+  const linkClass = ({ isActive }) =>
+    `flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-all ${
+      isActive
+        ? "bg-[#00d7c0] text-slate-950 font-bold shadow-lg shadow-[#00d7c0]/20"
+        : "text-slate-400 hover:text-white hover:bg-slate-800/60"
+    }`;
 
   return (
-    <div className="pt-10 ">
-      <NavLink
-        to="/dashboard"
-        className="flex gap-4 items-center pl-6  py-3 duration-300 cursor-pointer"
-      >
-        <h2 className="text-xl">
-          <IoHome></IoHome>
-        </h2>
-        <h2 className="text-xl">Dashboard</h2>
+    <div className="space-y-2 py-4">
+      <NavLink to="/dashboard" end className={linkClass}>
+        <FaHome className="text-lg" />
+        <span>Dashboard</span>
       </NavLink>
-      <div className="border-b pb-10 border-gray-600">
-        {role === "Admin" && <AdminMenu />}
-        {role === "Worker" && <WorkerMenu />}
-        {role === "Buyer" && <BuyerMenu />}
-      </div>
 
-      <div className="pt-10">
-      <NavLink
-        to="/"
-        className="flex gap-4 items-center pl-6   py-3 duration-300 cursor-pointer"
-      >
-        <h2 className="text-xl">
-          <IoHome></IoHome>
-        </h2>
-        <h2 className="text-xl">Home</h2>
-      </NavLink>
-        <NavLink onClick={handleSidebarLogout} className="flex gap-2 pl-6   py-3 duration-300 items-center">
-          <button className="text-xl font-bold">
-            <CiLogin></CiLogin>
-          </button>
-          <h2 className="text-xl">Logout</h2>
-        </NavLink>
-      </div>
+      {isLoading && <p className="px-4 py-3 text-xs text-slate-500">Loading menu...</p>}
+
+      {/* WORKER LINKS */}
+      {!isLoading && isWorker && (
+        <>
+          <NavLink to="/dashboard/taskLists" className={linkClass}>
+            <FaTasks className="text-lg" />
+            <span>Task Directory</span>
+          </NavLink>
+          <NavLink to="/dashboard/mySubmission" className={linkClass}>
+            <FaHistory className="text-lg" />
+            <span>My Submissions</span>
+          </NavLink>
+          <NavLink to="/dashboard/approvedSubmissions" className={linkClass}>
+            <FaCheckCircle className="text-lg" />
+            <span>Approved Submissions</span>
+          </NavLink>
+          <NavLink to="/dashboard/withdrawals" className={linkClass}>
+            <FaWallet className="text-lg" />
+            <span>Withdrawals</span>
+          </NavLink>
+        </>
+      )}
+
+      {/* BUYER / CLIENT LINKS */}
+      {!isLoading && isBuyer && (
+        <>
+          <NavLink to="/dashboard/addNewTasks" className={linkClass}>
+            <FaPlusCircle className="text-lg" />
+            <span>Add New Task</span>
+          </NavLink>
+          <NavLink to="/dashboard/myTasks" className={linkClass}>
+            <FaTasks className="text-lg" />
+            <span>My Tasks</span>
+          </NavLink>
+          <NavLink to="/dashboard/tasksToReview" className={linkClass}>
+            <FaClipboardList className="text-lg" />
+            <span>Tasks To Review</span>
+          </NavLink>
+          <NavLink to="/dashboard/purchaseCoin" className={linkClass}>
+            <FaWallet className="text-lg" />
+            <span>Purchase Coins</span>
+          </NavLink>
+          <NavLink to="/dashboard/paymentHistory" className={linkClass}>
+            <FaReceipt className="text-lg" />
+            <span>Payment History</span>
+          </NavLink>
+        </>
+      )}
+
+      {/* ADMIN LINKS */}
+      {!isLoading && isAdmin && (
+        <>
+          <NavLink to="/dashboard/manageUsers" className={linkClass}>
+            <FaUsers className="text-lg" />
+            <span>Manage Users</span>
+          </NavLink>
+          <NavLink to="/dashboard/manageTasks" className={linkClass}>
+            <FaTasks className="text-lg" />
+            <span>Manage Tasks</span>
+          </NavLink>
+          <NavLink to="/dashboard/withdrawRequests" className={linkClass}>
+            <FaShieldAlt className="text-lg" />
+            <span>Withdrawal Requests</span>
+          </NavLink>
+          <NavLink to="/dashboard/activityLog" className={linkClass}>
+            <FaHistory className="text-lg" />
+            <span>Activity Log</span>
+          </NavLink>
+        </>
+      )}
     </div>
   );
 };

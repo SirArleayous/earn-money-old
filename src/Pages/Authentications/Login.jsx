@@ -4,11 +4,10 @@ import { AuthContext } from "../../components/AuthProvider/AuthProvider";
 import toast from "react-hot-toast";
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import axios from "axios";
 import CustomCursor from "../../components/CustomCursor/CustomCursor";
 import { getAuthErrorMessage } from "../../utils/authError";
-
-const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://earn-money-server-5.onrender.com";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useQueryClient } from "@tanstack/react-query";
 
 const inputCls =
   "w-full rounded-lg bg-slate-800 border border-slate-700 text-white px-3 py-2 focus:border-[#00d7c0] focus:outline-none";
@@ -17,6 +16,8 @@ const errCls = "text-red-400 text-xs mt-1";
 
 const Login = () => {
   const { createSignInUser, signInWithGoogle } = useContext(AuthContext);
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,7 +31,11 @@ const Login = () => {
 
   const onSubmit = async ({ email, password }) => {
     try {
+      // Remove stale local role so fresh role is fetched from DB
+      localStorage.removeItem("sinex_user_role");
       await createSignInUser(email, password);
+      queryClient.invalidateQueries(["user-role", email]);
+      queryClient.invalidateQueries(["myInfo", email]);
       toast.success("Login successful! Welcome to SINEX.");
       navigate(from, { replace: true });
     } catch (error) {
@@ -41,15 +46,16 @@ const Login = () => {
 
   const handleGoogleLogin = async () => {
     try {
+      localStorage.removeItem("sinex_user_role");
       const { user } = await signInWithGoogle();
-      // Backend should upsert, so first-time Google users get a DB record (role/coins).
-      axios
-        .post(
-          `${backendUrl}/api/users`,
-          { name: user.displayName, email: user.email, photo: user.photoURL, role: "Worker", coin: 10 },
-          { timeout: 60000 }
-        )
+      
+      await axiosSecure
+        .post("/users", { name: user.displayName, email: user.email, photo: user.photoURL, role: "Worker", coin: 10 })
         .catch((e) => console.warn("Backend user sync failed:", e.message));
+
+      queryClient.invalidateQueries(["user-role", user.email]);
+      queryClient.invalidateQueries(["myInfo", user.email]);
+
       toast.success("Google login successful!");
       navigate(from, { replace: true });
     } catch (error) {
@@ -80,7 +86,7 @@ const Login = () => {
                 className={`${inputCls} pr-10`}
                 {...register("password", { required: "Password is required" })} />
               <button type="button" onClick={() => setShowPassword((s) => !s)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                className="absolute right-3 top-[#50%] -translate-y-1/2 text-slate-400 hover:text-white">
                 {showPassword ? <FaEyeSlash /> : <FaEye />}
               </button>
             </div>

@@ -1,121 +1,70 @@
-import React, { useContext, useState } from "react";
+import React from "react";
 import MySubmissionTable from "./MySubmissionTable";
-import { useQuery } from "@tanstack/react-query";
-import useAxiosSecure from "./../../Hooks/useAxiosSecure";
 import useAuth from "../../Hooks/useAuth";
-import "./Pagination.css";
-import { ThemeContext } from "../../context/ThemeContext";
+import useAxiosSecure from "../../Hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
+
+// Same row shape the old table component expects, filled with real data
+const toRow = (s) => ({
+  ...s,
+  worker_detail: { name: s.worker_name, email: s.worker_email },
+  buyer_detail: { name: s.buyer_name, email: s.buyer_email },
+  current_date: s.createdAt,
+  date: new Date(s.createdAt).toLocaleDateString(),
+  PaymentCoin: s.payable_amount,
+});
 
 const MySubmissions = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
-  const [currentPage, setCurrentPage] = useState(0);
-  const { theme } = useContext(ThemeContext);
-  const itemsPerPage = 6;
 
-  const {
-    data: { result: mySubmissions = [], total = 0 } = {},
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["mySubmission", user?.email, currentPage, itemsPerPage],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(
-        `api/worker/submissions/${user?.email}?page=${currentPage}&size=${itemsPerPage}`
-      );
-      console.log(data);
-      return data;
-    },
+  // Real submissions from the server; refreshes every 8 seconds so approvals and rejections appear by themselves
+  const { data: serverSubmissions = [] } = useQuery({
+    queryKey: ["my-submissions", user?.email],
+    enabled: !!user?.email,
+    refetchInterval: 8000,
+    queryFn: async () => (await axiosSecure.get(`/api/submissions/worker/${user.email}`)).data,
   });
-
-  console.log(mySubmissions);
-
-  const numberOfPages = Math.ceil(total / itemsPerPage);
-  const pages = [...Array(numberOfPages).keys()];
-  console.log(pages);
-
-  if (isLoading)
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <span className="loading loading-ring loading-lg"></span>
-      </div>
-    );
-
-  const handlePrev = () => {
-    if (currentPage > 0) {
-      setCurrentPage(currentPage - 1);
-    }
-  };
-
-  const handleNext = () => {
-    if (currentPage < pages.length - 1) {
-      setCurrentPage(currentPage + 1);
-    }
-  };
+  const allSubmissions = serverSubmissions.map(toRow);
 
   return (
-    <div
-      className={`min-h-screen ${
-        theme === "light"
-          ? "bg-[#f9fafc] text-black"
-          : "dark:bg-black dark:text-white"
-      }`}
-    >
-      <div className="w-[90%] mx-auto">
-        <div className="py-8">
-          <h2 className="font-bold text-3xl md:text-4xl text-center">
-            My Task Submissions
-          </h2>
-          <p className="md:w-[50%] mx-auto py-3 text-center">
-            Track the review status of your task evidence submissions in real time across active SINEX campaigns.
-          </p>
-        </div>
-        <div className="overflow-x-auto">
-          <table className="table">
-            <thead>
-              <tr
-                className={`${
-                  theme === "light" ? "text-black" : "dark:text-white"
-                }`}
-              >
-                <th>Task Title</th>
-                <th>Submission Detail</th>
-                <th>Date</th>
-                <th>Reward Payment</th>
-                <th>Status</th>
-                <th>Client Name</th>
-                <th>Client Email</th>
+    <div className="max-w-6xl mx-auto space-y-6">
+      <div className="text-center space-y-2">
+        <h2 className="text-3xl font-extrabold text-white">
+          My Task <span className="text-[#00d7c0]">Submissions</span>
+        </h2>
+        <p className="text-slate-400 text-sm max-w-lg mx-auto">
+          Track the review status of your task evidence submissions in real time across active SINEX campaigns.
+        </p>
+      </div>
+
+      <div className="overflow-x-auto bg-[#111827]/90 border border-slate-800 rounded-2xl shadow-2xl p-4">
+        <table className="w-full text-left border-collapse">
+          <thead>
+            <tr className="bg-[#0B0F19] border-b border-slate-800 text-xs uppercase tracking-wider text-slate-400">
+              <th className="p-4">Task Title</th>
+              <th className="p-4">Submission Detail</th>
+              <th className="p-4">Date</th>
+              <th className="p-4">Reward</th>
+              <th className="p-4">Status</th>
+              <th className="p-4">Client Name</th>
+              <th className="p-4">Client Email</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-800/60 text-sm text-slate-300">
+            {allSubmissions.length === 0 ? (
+              <tr>
+                <td colSpan="7" className="text-center py-8 text-slate-500">
+                  No submissions found. Complete a task from the Task Directory to view progress!
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {mySubmissions.map((mySubmit, index) => (
-                <MySubmissionTable
-                  key={index}
-                  mySubmit={mySubmit}
-                ></MySubmissionTable>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="flex justify-center py-10">
-          <button onClick={handlePrev} className="btn mr-2">
-            Prev
-          </button>
-          {pages.map((page, index) => (
-            <button
-              key={index}
-              onClick={() => setCurrentPage(page)}
-              className={`btn mx-2 px-6 ${
-                currentPage === page ? "selected" : ""
-              }`}
-            >
-              {page + 1}
-            </button>
-          ))}
-          <button onClick={handleNext} className="btn ml-2">
-            Next
-          </button>
-        </div>
+            ) : (
+              allSubmissions.map((mySubmit) => (
+                <MySubmissionTable key={mySubmit._id} mySubmit={mySubmit} />
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -1,33 +1,24 @@
 import React from "react";
 
-const WithdrawalRequestTable = ({ requests,handleApproval,theme }) => {
+const badgeClass = { Pending: "badge-warning", Approved: "badge-accent text-white", Rejected: "badge-error text-white" };
+
+const WithdrawalRequestTable = ({ requests, handleApproval, handleReject, theme }) => {
   const {
-    accountNumber,
-    _id,
-    name,
-    email,
-    paymentMethod,
-    convertedUsd,
-    withdrawCoin,
-    withdrawalDate,
-    status
+    account_number: accountNumber,
+    worker_name: name,
+    worker_email: email,
+    payment_system: paymentMethod,
+    withdrawal_amount: convertedUsd,
+    withdrawal_coin: withdrawCoin,
+    createdAt: withdrawalDate,
+    status,
   } = requests || {};
 
-  let date = new Date(withdrawalDate);
-  /* Date format you have */
-  let dateMDY = `${date.getDate()}-${
-    date.getMonth() + 1
-  }-${date.getFullYear()}`;
-  console.log(dateMDY);
-
-
+  const date = new Date(withdrawalDate);
+  const dateMDY = `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`;
 
   return (
-    <tr className={` ${
-      theme === "light"
-        ? " text-black"
-        : " dark:text-white"
-    }`}>
+    <tr className={` ${theme === "light" ? " text-black" : " dark:text-white"}`}>
       <td>
         <div className="flex items-center gap-3">
           <div>
@@ -41,16 +32,23 @@ const WithdrawalRequestTable = ({ requests,handleApproval,theme }) => {
       <td>{convertedUsd}$</td>
       <td>
         {" "}
-        <div className="badge badge-accent text-white">{status}</div>
+        <div className={`badge ${badgeClass[status] || "badge-accent text-white"}`}>{status === "Approved" ? "Paid" : status}</div>
       </td>
 
       <td>{accountNumber}</td>
       <td>{paymentMethod}</td>
       <td>{dateMDY}</td>
       <td>
-        <button onClick={() => handleApproval("Approved",withdrawCoin,email,convertedUsd,"/dashboard/withdrawals",_id)} className="bg-slate-700 rounded-full text-white px-4 py-2">
-          Payment
-        </button>
+        {status === "Pending" && (
+          <div className="flex gap-2">
+            <button onClick={() => handleApproval(requests)} className="bg-slate-700 rounded-full text-white px-4 py-2">
+              Payment
+            </button>
+            <button onClick={() => handleReject(requests)} className="bg-rose-600 rounded-full text-white px-4 py-2">
+              Reject
+            </button>
+          </div>
+        )}
       </td>
     </tr>
   );

@@ -1,35 +1,53 @@
-import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import useAuth from './useAuth';
+import axios from "axios";
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { getAuth } from "firebase/auth";
+import useAuth from "./useAuth";
 
+const rawUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
+export const API_URL = rawUrl.endsWith("/api") ? rawUrl : `${rawUrl.replace(/\/$/, "")}/api`;
 
+export const axiosSecure = axios.create({ baseURL: API_URL });
 
-export const axiosSecure = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000"
-})
+// Intercept requests: attach auth token and prevent double `/api/api` URL duplication
+axiosSecure.interceptors.request.use(async (config) => {
+  const u = getAuth().currentUser;
+  if (u) {
+    config.headers.authorization = `Bearer ${await u.getIdToken()}`;
+  }
+
+  // Strip duplicate leading /api if the calling component passed '/api/...'
+  if (config.url && config.url.startsWith("/api/")) {
+    config.url = config.url.replace(/^\/api/, "");
+  } else if (config.url && config.url.startsWith("api/")) {
+    config.url = config.url.replace(/^api\//, "");
+  }
+
+  return config;
+});
 
 const useAxiosSecure = () => {
-    const navigate = useNavigate();
-    const {userSignOut} = useAuth();
-    axiosSecure.interceptors.request.use(function(config) {
-        const token = localStorage.getItem("access-token");
-        console.log("request stopped by interceptors",token);
-        config.headers.authorization = `Bearer ${token}`;
-        return config;
-    }, function (error) {
-        return Promise.reject(error)
-    })
-    axiosSecure.interceptors.response.use(function(response){
-        return response
-    },async(error) => {
-        const status = error.response.status;
-        if(status === 401 || status === 403 || status === 400){
-            await userSignOut();
-            navigate("/login")
+  const navigate = useNavigate();
+  const auth = useAuth();
+  const signOutFn = auth?.userSignOut || auth?.logOut;
+
+  useEffect(() => {
+    const id = axiosSecure.interceptors.response.use(
+      (res) => res,
+      async (error) => {
+        const { status, data } = error.response || {};
+        // Sign out only for bad tokens or suspended accounts (a plain 403 is just "not allowed")
+        if (status === 401 || (status === 403 && data?.message === "Account suspended")) {
+          await signOutFn?.();
+          navigate("/login");
         }
-        return Promise.reject(error)
-    })
-    return axiosSecure;
+        return Promise.reject(error);
+      }
+    );
+    return () => axiosSecure.interceptors.response.eject(id);
+  }, [signOutFn, navigate]);
+
+  return axiosSecure;
 };
 
 export default useAxiosSecure;

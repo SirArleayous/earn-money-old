@@ -11,12 +11,16 @@ import AddNewTasks from "../Pages/ByerRoutes/AddNewTasks";
 import MyTasks from "../Pages/ByerRoutes/MyTasks";
 import BuyerRouter from "./BuyerRouter";
 import ManageUsers from "../Pages/AdminRoutes/ManageUsers";
+import ManageWithdrawals from "../Pages/AdminRoutes/ManageWithdrawals";
+import ActivityLog from "../Pages/AdminRoutes/ActivityLog";
 import AdminRouter from "./AdminRouter";
 import TaskLists from "../Pages/WorkerRoutes/TaskLists";
 import TaskDetails from "../Pages/WorkerRoutes/TaskDetails";
 import MySubmissions from "../Pages/WorkerRoutes/MySubmissions";
-// import TaskToReview from "../Pages/ByerRoutes/TaskToReview";
+import ApprovedSubmissions from "../Pages/WorkerRoutes/ApprovedSubmissions";
+import TaskToReview from "../Pages/ByerRoutes/TaskToReview";
 import PurchaseCoin from "../Pages/ByerRoutes/PurchaseCoin";
+import PaymentHistory from "../Pages/ByerRoutes/PaymentHistory";
 import Payment from "../Pages/Payment/Payment";
 import Withdrawals from "../Pages/WorkerRoutes/Withdrawals";
 import ManageTasks from "../Pages/AdminRoutes/ManageTasks";
@@ -37,16 +41,16 @@ const router = createBrowserRouter([
       },
       {
         path: "about",
-        element: <About></About>
+        element: <About></About>,
       },
       {
         path: "contact",
-        element: <Contact></Contact>
+        element: <Contact></Contact>,
       },
       {
         path: "task/:id",
-        element: <TopRatedTaskDetails></TopRatedTaskDetails>
-      }
+        element: <TopRatedTaskDetails></TopRatedTaskDetails>,
+      },
     ],
   },
   {
@@ -75,14 +79,13 @@ const router = createBrowserRouter([
       },
       {
         path: "profile",
-        element: <Profile></Profile>
+        element: <Profile></Profile>,
       },
       {
         path: "payment/:id",
         element: (
           <PrivetRouter>
             <BuyerRouter>
-              {" "}
               <Payment></Payment>
             </BuyerRouter>
           </PrivetRouter>
@@ -92,10 +95,9 @@ const router = createBrowserRouter([
         path: "addNewTasks",
         element: (
           <PrivetRouter>
-            {" "}
             <BuyerRouter>
               <AddNewTasks></AddNewTasks>
-            </BuyerRouter>{" "}
+            </BuyerRouter>
           </PrivetRouter>
         ),
       },
@@ -103,21 +105,19 @@ const router = createBrowserRouter([
         path: "myTasks",
         element: (
           <PrivetRouter>
-            {" "}
             <BuyerRouter>
               <MyTasks></MyTasks>
-            </BuyerRouter>{" "}
+            </BuyerRouter>
           </PrivetRouter>
         ),
       },
       {
-        path: "manageTasks",
+        path: "tasksToReview",
         element: (
           <PrivetRouter>
-            {" "}
-            <AdminRouter>
-              <ManageTasks></ManageTasks>
-            </AdminRouter>{" "}
+            <BuyerRouter>
+              <TaskToReview></TaskToReview>
+            </BuyerRouter>
           </PrivetRouter>
         ),
       },
@@ -125,10 +125,70 @@ const router = createBrowserRouter([
         path: "purchaseCoin",
         element: (
           <PrivetRouter>
-            {" "}
             <BuyerRouter>
               <PurchaseCoin></PurchaseCoin>
-            </BuyerRouter>{" "}
+            </BuyerRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        path: "paymentHistory",
+        element: (
+          <PrivetRouter>
+            <BuyerRouter>
+              <PaymentHistory></PaymentHistory>
+            </BuyerRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        path: "manageTasks",
+        element: (
+          <PrivetRouter>
+            <AdminRouter>
+              <ManageTasks></ManageTasks>
+            </AdminRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        path: "manageUsers",
+        element: (
+          <PrivetRouter>
+            <AdminRouter>
+              <ManageUsers></ManageUsers>
+            </AdminRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        path: "withdrawRequests",
+        element: (
+          <PrivetRouter>
+            <AdminRouter>
+              <ManageWithdrawals></ManageWithdrawals>
+            </AdminRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        // alias: the old sidebar link pointed here
+        path: "admin/withdrawals",
+        element: (
+          <PrivetRouter>
+            <AdminRouter>
+              <ManageWithdrawals></ManageWithdrawals>
+            </AdminRouter>
+          </PrivetRouter>
+        ),
+      },
+      {
+        path: "activityLog",
+        element: (
+          <PrivetRouter>
+            <AdminRouter>
+              <ActivityLog></ActivityLog>
+            </AdminRouter>
           </PrivetRouter>
         ),
       },
@@ -144,32 +204,29 @@ const router = createBrowserRouter([
         path: "mySubmission",
         element: (
           <PrivetRouter>
-            {" "}
             <WorkerRouter>
               <MySubmissions></MySubmissions>
-            </WorkerRouter>{" "}
+            </WorkerRouter>
           </PrivetRouter>
         ),
       },
-
+      {
+        path: "approvedSubmissions",
+        element: (
+          <PrivetRouter>
+            <WorkerRouter>
+              <ApprovedSubmissions></ApprovedSubmissions>
+            </WorkerRouter>
+          </PrivetRouter>
+        ),
+      },
       {
         path: "withdrawals",
         element: (
           <PrivetRouter>
-            {" "}
             <WorkerRouter>
               <Withdrawals></Withdrawals>
-            </WorkerRouter>{" "}
-          </PrivetRouter>
-        ),
-      },
-      {
-        path: "manageUsers",
-        element: (
-          <PrivetRouter>
-            <AdminRouter>
-              <ManageUsers></ManageUsers>
-            </AdminRouter>
+            </WorkerRouter>
           </PrivetRouter>
         ),
       },

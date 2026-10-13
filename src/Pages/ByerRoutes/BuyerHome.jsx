@@ -13,38 +13,26 @@ const BuyerHome = () => {
   const { user } = useAuth();
   const axiosSecure = useAxiosSecure();
   const {theme} = useContext(ThemeContext)
-  const {
-    data: addedTasks = [],
-    isLoading,
-    refetch,
-  } = useQuery({
+  // all three lists refresh every 8 seconds so the numbers stay current
+  const live = { enabled: !!user?.email, refetchInterval: 8000 };
+
+  const { data: addedTasks = [] } = useQuery({
     queryKey: ["addedTasks", user?.email],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(`api/tasks/my/${user?.email}`);
-      console.log(data);
-      return data;
-    },
+    ...live,
+    queryFn: async () => (await axiosSecure.get(`/api/tasks/my/${user?.email}`)).data,
   });
 
-  const { data: totalWorkers = [],refetch: workerRefetch } = useQuery({
-    queryKey: ["totalWorkers", user],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(`api/tasks/my/${user?.email}`);
-      console.log(data);
-      return data;
-    },
+  const { data: totalWorkers = [], refetch: workerRefetch } = useQuery({
+    queryKey: ["totalWorkers", user?.email],
+    ...live,
+    queryFn: async () => (await axiosSecure.get(`/api/tasks/my/${user?.email}`)).data,
   });
 
   const { data: myAmounts = [] } = useQuery({
     queryKey: ["myAmounts", user?.email],
-    queryFn: async () => {
-      const { data } = await axiosSecure.get(`api/payments/history/${user?.email}`);
-      console.log(data);
-      return data;
-    },
+    ...live,
+    queryFn: async () => (await axiosSecure.get(`/api/payments/history/${user?.email}`)).data,
   });
-
-  // const totalCoins = allInfo.reduce((total, user) => total + (user.coin || 0), 0);
 
   const totalWorker = totalWorkers.reduce(
     (total, Worker) => total + (Worker.worker || 0),
@@ -57,25 +45,12 @@ const BuyerHome = () => {
 
   const usdAmount = myAmount / 100;
 
-  console.log(totalWorkers);
-  console.log(addedTasks);
-
   return (
     <div  className={`p-8 ${
       theme === "light"
         ? "bg-[#f9fafc] text-black"
         : "dark:bg-black dark:text-white"
     }`}>
-      {/* <div className="py-8">
-        <h2 className="text-center font-bold text-4xl py-3">
-          Welcome To Buyer Dashboard!
-        </h2>
-        <p className="w-[50%] mx-auto text-center">
-          Effortlessly manage your account, track activity, and access
-          personalized features all in one place. Enjoy a streamlined and
-          intuitive experience.
-        </p>
-      </div> */}
       <div className="lg:flex gap-4">
         <div className="lg:w-[70%] ">
           <div  className={`p-8 rounded-xl shadow-2xl ${

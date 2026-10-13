@@ -34,9 +34,16 @@ const AuthProvider = ({ children }) => {
     return updateProfile(auth.currentUser, profileData);
   };
 
-  const logOut = () => {
+  const logOut = async () => {
     setLoading(true);
-    return signOut(auth);
+    try {
+      await signOut(auth);
+    } catch (error) {
+      console.warn("Firebase signout bypassed (offline mode):", error);
+    } finally {
+      setUser(null);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -55,6 +62,7 @@ const AuthProvider = ({ children }) => {
     signInWithGoogle,
     updateUserProfile,
     logOut,
+    userSignOut: logOut, // Added alias to match DashboardNavbar usage
   };
 
   return (
